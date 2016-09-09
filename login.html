@@ -9,18 +9,27 @@
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Expires" content="0" />
 </head>
+
 <body>
+	<nav>
+		<a href="https://david-keith.github.io/GeoInfo/">Home | </a>
+		<a href="https://david-keith.github.io/GeoInfo/login">Login | </a>
+		<a href="https://david-keith.github.io/GeoInfo/app">App</a>
+	</nav>
+
+	<input type="button" value="home" onClick="parent.location='https://david-keith.github.io/GeoInfo/'">
+	<input type="button" value="test" onClick="parent.location='https://www.google.com'">
+	
 	<h2>Log in to use specific features</h2>
 	<form>
 		<p><label>Username: <input type="email" placeholder="email"/></p></label>
-		<link href="google.com">test</link>
-		<a href="http://www.google.com">test2</a>
+		<p><label>Password: <input type="text" placeholder="password"/></p></label>
+		<br />
+		<p>Test that you're not a robot. Enter 'sun' or 'rain'</p>
+		<p><label>Test: <input type="text" pattern="sun|rain" placeholder="secret word"/></p></label>
+		<input type="submit" value="login" />
 	</form>
-	
 	<br /> <br />
 	
-		<form>
-			<input type="button" value="home" onClick="parent.location='https://david-keith.github.io/GeoInfo/'">
-			<input type="button" value="test" onClick="parent.location='https://www.google.com'">
-		</form>
+	<a href="https://david-keith.github.io/GeoInfo/">Continue without logging in</a>
 </html>
