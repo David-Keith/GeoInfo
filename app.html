@@ -3,27 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>GeoInfo - Weather</title>
-	
-	<!-- ensure the page doesn't cache -->
-	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Expires" content="0" />
-	
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-</style>
-	
+	<link rel="stylesheet" type="text/css" href="main.css">
 </head>
 
 <body>
@@ -34,7 +14,7 @@ td, th {
 	</nav>
 	
 	<header>
-		<h1 style="text-align: center;">Select a location on the map</h1>
+		<h1 id="appText" style="text-align: center;">Select a location on the map</h1>
 	</header>
 	
 	<table>
@@ -43,8 +23,8 @@ td, th {
 			<th rowspan="1" colspan="1">Forecast:</th>
 		</tr>
 		<tr>
-			<td rowspan="3"><img src="https://lh3.googleusercontent.com/MOf9Kxxkj7GvyZlTZOnUzuYv0JAweEhlxJX6gslQvbvlhLK5_bSTK6duxY2xfbBsj43H=w300" alt="map"/></td>
-			<td rowspan="2"><img src="http://worldheadway.com/wp-content/uploads/2015/04/weather.jpg" alt="forecast"/></td>
+			<td rowspan="3"><img src="https://lh3.googleusercontent.com/MOf9Kxxkj7GvyZlTZOnUzuYv0JAweEhlxJX6gslQvbvlhLK5_bSTK6duxY2xfbBsj43H=w300" /></td>
+			<td rowspan="2"><img src="http://worldheadway.com/wp-content/uploads/2015/04/weather.jpg" /></td>
 		</tr>
 		<tr></tr>
 		<tr>
@@ -54,11 +34,11 @@ td, th {
 	
 	<p>Saved locations:
 	<select>
-		<option selected="selected">Saved location1</option>
-		<option>Saved location2</option>
+		<option>Saved location1</option>
+		<option selected="selected">Saved location2</option>
 		<option>Saved location3</option>
 	</select>
-</p>
+	</p>
 
 </body>
 </html>

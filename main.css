@@ -1,1 +1,84 @@
-{\rtf1}
+h1 {
+	color: blue;
+	font-size: 64px;
+}
+
+h3 {
+	color: black;
+	position: relative;
+	top: -32px;
+	font-size: 32px;
+}
+
+nav {
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+	border: 2px solid blue;
+	font: normal;
+	position: relative;
+	top: 2px;
+	padding: .4%;
+	background-color: lightgreen;
+	border-radius: 8px;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.invalidEmail {
+	display: none;
+}
+
+input:invalid {
+	border: 2px solid red;
+}
+
+input:invalid + div {
+	display: inline;
+	transform: translate(80px, 50%);
+	transition: 8s;
+}
+
+input:focus + div {
+	display: none;
+}
+
+#appText {
+	transform: translate(4px, 4px);
+	transition: 4s;
+}
+
+#home {
+	margin: auto;
+	position: fixed;
+	width: 100%;
+	top: 4%;
+	z-index: -1;
+	opacity: .9;
+}
+
+#homeImg {
+	position: relative;
+	top: 20px;
+	display: block;
+	margin: auto;
+	width: 40%;
+}
+
+#test {
+	color: blue;
+	transform: translate(4px, 4px);
+	transition: 4s;
+}
