@@ -66,8 +66,8 @@ header {
 
 .mainButton {
 	position: absolute;
-	width: 99%;
-	top: 60%;
+	width: 50%;
+	top: 50%;
 	text-align: center;
 	font-size: 18px;
 	padding: 50px 0 50px 0;
