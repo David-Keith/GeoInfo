@@ -1,3 +1,28 @@
+nav {
+	position: fixed;
+	text-align: center;
+	top: 0;
+	left: 0;
+  	right: 0;
+  	margin: auto; 
+  	width: 100%;
+  	z-index: 10;
+}
+
+nav a {
+	text-decoration: none;
+	border: 2px solid blue;
+	font: normal;
+	padding: 10px;
+	color: white;
+	background-color: green;
+	border-radius: 8px;
+}
+
+nav a:hover {
+	background-color: blue;
+}
+
 h1 {
 	color: blue;
 	font-size: 64px;
@@ -8,31 +33,45 @@ h3 {
 	position: relative;
 	top: -32px;
 	font-size: 32px;
+	z-index: -1
 }
 
-nav {
-	position: absolute;
-	text-align: center;
-	top: 0;
-	left: 0;
-  	right: 0;
-  	margin: auto; 
-  	width: 100%;
-}
-
-a {
-	text-decoration: none;
-	border: 2px solid blue;
-	font: normal;
-	padding: 10px;
-
-	background-color: lightgreen;
-	border-radius: 8px;
-}
-
-.info {
+.home {
 	position: relative;
-	top: 400px;
+	top: -64px;
+}
+
+#homeImg {
+	position: relative;
+	top: -64px;
+	display: block;
+	margin: auto;
+	width: 40%;
+	opacity: .9;
+	z-index: -1;
+}
+
+#mainButton {
+	font-size: 20px;
+	text-decoration: none;
+	color: white;
+	background-color: blue;
+	margin: auto;
+	position: relative;
+	top: 420px;
+	width: 5%;
+	padding: 32px;
+	display: block;
+}
+
+#mainButton:hover {
+	background-color: darkblue;
+}
+
+footer {
+	position: relative;
+	top: 32px;
+	margin-bottom: 32px;
 }
 
 table {
@@ -45,6 +84,11 @@ td, th {
     border: 1px solid #dddddd;
     text-align: left;
     padding: 8px;
+}
+
+.interactive {
+	transform: translate(16%, 4%);
+	transition: 2s;
 }
 
 .invalidEmail {
@@ -63,26 +107,6 @@ input:invalid + div {
 
 input:focus + div {
 	display: none;
-}
-
-#appText {
-	transform: translate(4px, 4px);
-	transition: 4s;
-}
-
-#home {
-	position: relative;
-	top: -100px;
-	z-index: -1;
-	opacity: .9;
-}
-
-#homeImg {
-	position: relative;
-	top: 20px;
-	display: block;
-	margin: auto;
-	width: 40%;
 }
 
 #test {
