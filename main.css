@@ -11,18 +11,28 @@ h3 {
 }
 
 nav {
+	position: absolute;
 	text-align: center;
+	top: 0;
+	left: 0;
+  	right: 0;
+  	margin: auto; 
+  	width: 100%;
 }
 
 a {
 	text-decoration: none;
 	border: 2px solid blue;
 	font: normal;
-	position: relative;
-	top: 2px;
-	padding: .4%;
+	padding: 10px;
+
 	background-color: lightgreen;
 	border-radius: 8px;
+}
+
+.info {
+	position: relative;
+	top: 400px;
 }
 
 table {
@@ -61,10 +71,8 @@ input:focus + div {
 }
 
 #home {
-	margin: auto;
-	position: fixed;
-	width: 100%;
-	top: 4%;
+	position: relative;
+	top: -100px;
 	z-index: -1;
 	opacity: .9;
 }
