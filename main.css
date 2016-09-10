@@ -1,3 +1,4 @@
+/* Navigation bar. Persistent across the top of all pages */
 nav {
 	position: fixed;
 	text-align: center;
@@ -36,6 +37,7 @@ h3 {
 	z-index: -1
 }
 
+/* CSS for the home page */
 .home {
 	position: relative;
 	top: -64px;
@@ -74,23 +76,7 @@ footer {
 	margin-bottom: 32px;
 }
 
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
-
-.interactive {
-	transform: translate(16%, 4%);
-	transition: 2s;
-}
-
+/* CSS input validation display for the login page */
 .invalidEmail {
 	display: none;
 }
@@ -109,8 +95,20 @@ input:focus + div {
 	display: none;
 }
 
-#test {
-	color: blue;
-	transform: translate(4px, 4px);
-	transition: 4s;
+/* CSS for the main app page */
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.interactive {
+	transform: translate(16%, 4%);
+	transition: 2s;
 }
