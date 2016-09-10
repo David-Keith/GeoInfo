@@ -25,11 +25,17 @@ nav a:hover {
 }
 
 h1 {
+<<<<<<< HEAD
+=======
+	margin: auto;
+	text-align: center;
+>>>>>>> refs/remotes/origin/gh-pages
 	color: blue;
 	font-size: 64px;
 }
 
 h3 {
+<<<<<<< HEAD
 	color: black;
 	position: relative;
 	top: -32px;
@@ -74,6 +80,63 @@ footer {
 	position: relative;
 	top: 32px;
 	margin-bottom: 32px;
+=======
+	margin: auto;
+	position: relative;
+	top:0;
+	text-align: center;
+	color: black;
+	font-size: 32px;
+	z-index: -1;
+}
+
+/* CSS for the home page */
+
+header {
+	margin-top: 32px;
+}
+
+.home {
+	padding: 50px 0 50px 0;
+	width: 100%;
+}
+
+#homeImg {
+	display: block;
+	margin: auto;
+	opacity: .9;
+	z-index: -1;
+	width: 50%;
+    height: auto;
+    opacity: 0.7;
+}
+
+.mainButton {
+	position: absolute;
+	width: 100%;
+	top: 60%;
+	text-align: center;
+	font-size: 18px;
+	padding: 40px 0 40px 0;
+	z-index: 4;
+}
+
+.mainButton a {
+	text-decoration: none;
+	color: white;
+	background-color: blue;
+	padding: 16px 40px 16px 40px;
+	left: 50%;
+	width: 100%;
+}
+
+.mainButton a:hover {
+	background-color: darkblue;
+}
+
+.info {
+	margin-top: 32px;
+>>>>>>> refs/remotes/origin/gh-pages
 }
 
 /* CSS input validation display for the login page */
