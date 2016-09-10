@@ -62,12 +62,18 @@ h3 {
 	position: relative;
 	top: 420px;
 	width: 5%;
+	height: 10px;
 	padding: 32px;
 	display: block;
 }
 
 #mainButton:hover {
 	background-color: darkblue;
+}
+
+.info {
+	position: relative;
+	margin: auto;
 }
 
 footer {
