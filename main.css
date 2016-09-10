@@ -39,8 +39,6 @@ h3 {
 
 /* CSS for the home page */
 .home {
-	position: relative;
-	top: -64px;
 }
 
 #homeImg {
@@ -54,17 +52,18 @@ h3 {
 }
 
 #mainButton {
-	font-size: 20px;
 	text-decoration: none;
 	color: white;
 	background-color: blue;
-	margin: auto;
-	position: relative;
-	top: 420px;
-	width: 5%;
-	height: 10px;
-	padding: 32px;
+	
+	position: absolute;
+	top: 70%;
+	left: 46%;
 	display: block;
+	
+	margin: auto;
+	width: 5%;
+	padding: 32px;
 }
 
 #mainButton:hover {
