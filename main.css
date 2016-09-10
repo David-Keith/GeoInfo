@@ -26,7 +26,6 @@ nav a:hover {
 
 h1 {
 	margin: auto;
-	border: 2px solid red;
 	text-align: center;
 	color: blue;
 	font-size: 64px;
@@ -34,7 +33,6 @@ h1 {
 
 h3 {
 	margin: auto;
-	border: 2px solid red;
 	position: relative;
 	top:0;
 	text-align: center;
@@ -50,13 +48,14 @@ header {
 }
 
 .home {
+	
 	border: 2px solid red;
+	width: 100%;
 }
 
 #homeImg {
 	display: block;
 	margin: auto;
-	width: 40%;
 	opacity: .9;
 	z-index: -1;
 	
@@ -67,12 +66,13 @@ header {
 
 .mainButton {
 	position: absolute;
-    left: 0;
-    top: 60%;
-    width: 100%;
-    text-align: center;
-    font-size: 18px;
+	width: 99%;
+	top: 60%;
+	text-align: center;
+	font-size: 18px;
+	padding: 50px 0 50px 0;
 	z-index: 4;
+	border: 2px solid red;
 }
 
 .mainButton a {
@@ -80,6 +80,9 @@ header {
 	color: white;
 	background-color: blue;
 	padding: 24px 64px 24px 64px;
+	border: 2px solid red;
+	top:0%;
+	left: 50%;
 }
 
 .mainButton a:hover {
@@ -87,14 +90,8 @@ header {
 }
 
 .info {
-	position: relative;
-	margin: auto;
-}
-
-footer {
-	position: relative;
-	top: 32px;
-	margin-bottom: 32px;
+	margin-top: 32px;
+	border: 2px solid red;
 }
 
 /* CSS input validation display for the login page */
