@@ -25,48 +25,64 @@ nav a:hover {
 }
 
 h1 {
+	margin: auto;
+	border: 2px solid red;
+	text-align: center;
 	color: blue;
 	font-size: 64px;
 }
 
 h3 {
-	color: black;
+	margin: auto;
+	border: 2px solid red;
 	position: relative;
-	top: -32px;
+	top:0;
+	text-align: center;
+	color: black;
 	font-size: 32px;
-	z-index: -1
+	z-index: -1;
 }
 
 /* CSS for the home page */
+
+header {
+	margin-top: 32px;
+}
+
 .home {
+	border: 2px solid red;
 }
 
 #homeImg {
-	position: relative;
-	top: -64px;
 	display: block;
 	margin: auto;
 	width: 40%;
 	opacity: .9;
 	z-index: -1;
+	
+	width: 50%;
+    height: auto;
+    opacity: 0.7;
 }
 
-#mainButton {
+.mainButton {
+	position: absolute;
+    left: 0;
+    top: 60%;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+	z-index: 4;
+}
+
+.mainButton a {
 	text-decoration: none;
 	color: white;
 	background-color: blue;
-	
-	position: absolute;
-	top: 70%;
-	left: 46%;
-	display: block;
-	
-	margin: auto;
-	width: 5%;
-	padding: 32px;
+	padding: 24px 64px 24px 64px;
 }
 
-#mainButton:hover {
+.mainButton a:hover {
 	background-color: darkblue;
 }
 
