@@ -25,62 +25,13 @@ nav a:hover {
 }
 
 h1 {
-<<<<<<< HEAD
-=======
 	margin: auto;
 	text-align: center;
->>>>>>> refs/remotes/origin/gh-pages
 	color: blue;
 	font-size: 64px;
 }
 
 h3 {
-<<<<<<< HEAD
-	color: black;
-	position: relative;
-	top: -32px;
-	font-size: 32px;
-	z-index: -1
-}
-
-/* CSS for the home page */
-.home {
-	position: relative;
-	top: -64px;
-}
-
-#homeImg {
-	position: relative;
-	top: -64px;
-	display: block;
-	margin: auto;
-	width: 40%;
-	opacity: .9;
-	z-index: -1;
-}
-
-#mainButton {
-	font-size: 20px;
-	text-decoration: none;
-	color: white;
-	background-color: blue;
-	margin: auto;
-	position: relative;
-	top: 420px;
-	width: 5%;
-	padding: 32px;
-	display: block;
-}
-
-#mainButton:hover {
-	background-color: darkblue;
-}
-
-footer {
-	position: relative;
-	top: 32px;
-	margin-bottom: 32px;
-=======
 	margin: auto;
 	position: relative;
 	top:0;
@@ -136,7 +87,6 @@ header {
 
 .info {
 	margin-top: 32px;
->>>>>>> refs/remotes/origin/gh-pages
 }
 
 /* CSS input validation display for the login page */
