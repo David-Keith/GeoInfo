@@ -49,12 +49,10 @@ header {
 
 .home {
 	padding: 50px 0 50px 0;
-	border: 2px solid red;
 	width: 100%;
 }
 
 #homeImg {
-	border: 2px solid red;
 	display: block;
 	margin: auto;
 	opacity: .9;
@@ -66,13 +64,12 @@ header {
 
 .mainButton {
 	position: absolute;
-	width: 99%;
+	width: 100%;
 	top: 60%;
 	text-align: center;
 	font-size: 18px;
 	padding: 40px 0 40px 0;
 	z-index: 4;
-	border: 2px solid red;
 }
 
 .mainButton a {
@@ -80,7 +77,6 @@ header {
 	color: white;
 	background-color: blue;
 	padding: 16px 40px 16px 40px;
-	border: 2px solid red;
 	left: 50%;
 	width: 100%;
 }
@@ -91,7 +87,6 @@ header {
 
 .info {
 	margin-top: 32px;
-	border: 2px solid red;
 }
 
 /* CSS input validation display for the login page */
