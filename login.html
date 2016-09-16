@@ -1,31 +1,49 @@
 <!-- This is the login page. Logged in users will be able to save locations on the map to quickly bring up again in the future.-->
-
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
 	<title>GeoInfo - Login</title>
-	<link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"> </script>
+    <script src="login.js"></script>
 </head>
 
 <body>
+    <script>
+//        $(Document).ready(function() {
+//            document.getElementById("LoginForm").style.display = 'none';
+//            console.log("Hello world!");
+//        });
+    </script>
 	<nav>
 		<a href="https://david-keith.github.io/GeoInfo/">Home</a>
 		<a href="https://david-keith.github.io/GeoInfo/login">Login</a>
 		<a href="https://david-keith.github.io/GeoInfo/app">App</a>
 	</nav>
 
-	<h2>Log in to use specific features</h2>
-	<form>
-		<label>Username: <input type="email" placeholder="email"/>
-		<div class="invalidEmail">Please enter a valid email</div></label>
-		<p><label>Password: <input type="text" placeholder="password"/></p></label>
-		<br />
-		<p>Test that you're not a robot. Enter 'sun' or 'rain'</p>
-		<p><label>Test: <input type="text" pattern="sun|rain" placeholder="secret word"/></p></label>
-		<input type="submit" value="login" />
-	</form>
-	<br /> <br />
-	
-	<a href="https://david-keith.github.io/GeoInfo/app">Continue without logging in</a>
+	<div id="LoginForm">
+        <h2>Log in to use specific features</h2>
+        <form>
+            <label>Username: <input id ="emailInput" type="email" placeholder="email"/>
+            <div class="invalidEmail">Please enter a valid email</div></label>
+            <p><label>Password: <input id="passwordInput" type="password" placeholder="password"/></label></p>
+            <br />
+            <p>Test that you're not a robot. Enter 'sun' or 'rain'</p>
+            <p><label>Test: <input id='secretInput' type="text" pattern="sun|rain" placeholder="secret word"/></label></p>
+            <input id="PasswordSubmit" type="submit" value="login" />
+        </form>
+        <br /> <br />
+
+        <a href="https://david-keith.github.io/GeoInfo/app">Continue without logging in</a>
+    </div>
+    <div id="UserLoggedIn">
+        <p>You are already logged in, redirecting you to the app.</p>
+    </div>
+    <script>
+        var emailInput = document.getElementById("emailInput").value;
+        var passwordInput = document.getElementById("passwordInput").value;
+        var secretInput = document.getElementById("secretInput").value;
+    </script>
+</body>
 </html>

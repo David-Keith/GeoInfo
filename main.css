@@ -108,6 +108,10 @@ input:focus + div {
 	display: none;
 }
 
+#UserLoggedIn {
+	display: none;
+}
+
 /* CSS for the main app page */
 table {
     font-family: arial, sans-serif;
