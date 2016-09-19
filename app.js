@@ -27,11 +27,10 @@ $(document).ready(function () {
     }
 });
 
-
 var locationsSaved = 0; //keeps track of how many locations a user has saved
 var locationCapacity = 3; //users can save up this many locations total
 
-//when a user clicks the button to save a new location, dynamically add the html for it to the list of saved locations
+// When a user clicks the button to save a new location, dynamically add the html for it to the list of saved locations
 $(document).ready(function() {
 $('#save').click(function() {
 	//users can currently save up to 3 locations
@@ -50,7 +49,7 @@ $('#save').click(function() {
 })
 })
 
-//when a user clicks the button to go to a saved location, update the map/forecast
+// When a user clicks the button to go to a saved location, update the map/forecast
 function goToLocation(elem) {
   var updatedLocation = elem.parentElement.getAttribute('data-location');
   $('#current').html("Saved location: " + updatedLocation);
@@ -68,10 +67,44 @@ function goToLocation(elem) {
   });
 }
 
-//when a user clicks the location delete button, remove the location and ensure the save location button is not disabled
+// When a user clicks the location delete button, remove the location and ensure the save location button is not disabled
 function deleteItem(divElem)
 {
 		locationsSaved--;
     divElem.parentElement.removeChild(divElem);
     if (locationsSaved < locationCapacity) $('#save').prop('disabled', false);
 }
+
+/*
+* Code for the main home page
+*/
+
+// When a user clicks the about button, info about the site is shown if not already. This action is added to the history stack
+$(document).ready(function() {
+$('#about').click(function() {
+	// if info about the site is already displayed, do nothing
+	if (history.state != null && history.state.about === true) return;
+	
+	// otherwise show the hidden view and add the default hidden view to the history stack
+	var s = {about: true};
+	history.pushState(s,'stuff','#about');
+	$('.info').show();
+})
+})
+
+// When a user goes back/forward in history to the main home page, ensure the info about the site is hidden
+window.addEventListener('popstate', function(e) {
+	var s = history.state;
+	console.log(s);
+      if (s === null || s.about !== true) {
+		  $('.info').hide();
+	  }
+});
+
+// When a user loads the home page in the /#about section, ensure info about the site is shown
+$(document).ready(function() {
+	var currentState = history.state;
+	if (currentState !== null && currentState.about === true) {
+		  $('.info').show();
+	  }
+})

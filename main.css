@@ -87,6 +87,7 @@ header {
 
 .info {
     margin-top: 32px;
+	display: none;
 }
 
 /* CSS input validation display for the login page */
