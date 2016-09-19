@@ -27,11 +27,6 @@ $(document).ready(function () {
     }
 });
 
-//when a user clicks the button to save a new location, dynamically add the html for it to the list of saved locations
-    $("#save").click(function () {
-        //users can currently save up to 3 locations
-        if (locationsSaved >= locationCapacity) return;
-
 var locationsSaved = 0; //keeps track of how many locations a user has saved
 var locationCapacity = 3; //users can save up this many locations total
 
@@ -51,7 +46,7 @@ $('#save').click(function() {
   );
   //disable the save button when the capacity of saved locations is reached
   if (locationsSaved == locationCapacity) $('#save').prop('disabled', true);
-})
+});
 });
 
 // When a user clicks the button to go to a saved location, update the map/forecast
