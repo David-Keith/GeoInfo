@@ -13,7 +13,6 @@ $(document).ready(function () {
 
     // Run every 2 seconds to check if user is logged in
     var intervalID = setInterval(function () {
-        console.log(sessionStorage.getItem("isLoggedIn"));
         if (sessionStorage.getItem("isLoggedIn") === "true") {
             goToApp();
         }
