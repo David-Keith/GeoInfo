@@ -1,111 +1,116 @@
 /* Navigation bar. Persistent across the top of all pages */
 nav {
-	position: fixed;
-	text-align: center;
-	top: 0;
-	left: 0;
-  	right: 0;
-  	margin: auto; 
-  	width: 100%;
-  	z-index: 10;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    z-index: 10;
 }
 
 nav a {
-	text-decoration: none;
-	border: 2px solid blue;
-	font: normal;
-	padding: 10px;
-	color: white;
-	background-color: green;
-	border-radius: 8px;
+    text-decoration: none;
+    border: 2px solid blue;
+    font: normal;
+    padding: 10px;
+    color: white;
+    background-color: green;
+    border-radius: 8px;
 }
 
 nav a:hover {
-	background-color: blue;
+    background-color: blue;
 }
 
 h1 {
-	margin: auto;
-	text-align: center;
-	color: blue;
-	font-size: 64px;
+    margin: auto;
+    text-align: center;
+    color: blue;
+    font-size: 64px;
 }
 
 h3 {
-	margin: auto;
-	position: relative;
-	top:0;
-	text-align: center;
-	color: black;
-	font-size: 32px;
-	z-index: -1;
+    margin: auto;
+    position: relative;
+    top: 0;
+    text-align: center;
+    color: black;
+    font-size: 32px;
+    z-index: -1;
 }
 
 /* CSS for the home page */
 
 header {
-	margin-top: 32px;
+    margin-top: 32px;
 }
 
 .home {
-	padding: 50px 0 50px 0;
-	width: 100%;
+    padding: 50px 0 50px 0;
+    width: 100%;
 }
 
 #homeImg {
-	display: block;
-	margin: auto;
-	opacity: .9;
-	z-index: -1;
-	width: 50%;
+    display: block;
+    margin: auto;
+    opacity: .9;
+    z-index: -1;
+    width: 50%;
     height: auto;
     opacity: 0.7;
 }
 
 .mainButton {
-	position: absolute;
-	width: 100%;
-	top: 60%;
-	text-align: center;
-	font-size: 18px;
-	padding: 40px 0 40px 0;
-	z-index: 4;
+    position: absolute;
+    width: 100%;
+    top: 60%;
+    text-align: center;
+    font-size: 18px;
+    padding: 40px 0 40px 0;
+    z-index: 4;
 }
 
 .mainButton a {
-	text-decoration: none;
-	color: white;
-	background-color: blue;
-	padding: 16px 40px 16px 40px;
-	left: 50%;
-	width: 100%;
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    padding: 16px 40px 16px 40px;
+    left: 50%;
+    width: 100%;
 }
 
 .mainButton a:hover {
-	background-color: darkblue;
+    background-color: darkblue;
 }
 
 .info {
-	margin-top: 32px;
+    margin-top: 32px;
+	display: none;
 }
 
 /* CSS input validation display for the login page */
 .invalidEmail {
-	display: none;
+    display: none;
 }
 
 input:invalid {
-	border: 2px solid red;
+    border: 2px solid red;
 }
 
 input:invalid + div {
-	display: inline;
-	transform: translate(80px, 50%);
-	transition: 8s;
+    display: inline;
+    transform: translate(80px, 50%);
+    transition: 8s;
 }
 
 input:focus + div {
-	display: none;
+    display: none;
+}
+
+#UserLoggedIn {
+    display: none;
 }
 
 /* CSS for the main app page */
@@ -122,6 +127,10 @@ td, th {
 }
 
 .interactive {
-	transform: translate(16%, 4%);
-	transition: 2s;
+    transform: translate(16%, 4%);
+    transition: 2s;
+}
+
+#UserNotLoggedIn {
+    display: none;
 }
