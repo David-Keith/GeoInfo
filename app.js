@@ -19,10 +19,10 @@ $(document).ready(function () {
         $("#AppMain").hide();
         $("#UserNotLoggedIn").show();
 
-        // Go to app after 5 seconds
+        // Go to app after 3.5 seconds
         window.setTimeout(function () {
             window.location = "login.html"
-        }, 5000);
+        }, 3500);
     }
 });
 
