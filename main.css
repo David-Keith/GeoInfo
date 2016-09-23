@@ -134,3 +134,33 @@ td, th {
 #UserNotLoggedIn {
     display: none;
 }
+
+#mapContainer {
+	border: 2px solid blue;
+	margin: auto;
+	height: 40%;
+	width: 30%;
+}
+
+#map {
+	height: 100%;
+	width: 100%;
+}
+
+#forecastContainer {
+	position: absolute;
+	border: 2px solid red;
+	height: 40%;
+	width: 30%;
+	left: 25%;
+}
+
+#weather {
+	height: 60%;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
