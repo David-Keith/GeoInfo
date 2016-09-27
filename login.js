@@ -23,8 +23,6 @@ $(document).ready(function () {
     $("#PasswordSubmit").click(function () {
         var username = $("#usernameInput").val();
         var password = $("#passwordInput").val();
-        console.log(username);
-        console.log(password);
         validateLogin(usersRef, username, password);
     });
 
