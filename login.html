@@ -6,6 +6,7 @@
     <title>GeoInfo - Login</title>
     <link rel="stylesheet" type="text/css" href="main.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
     <script src="login.js"></script>
 </head>
 
@@ -17,28 +18,31 @@
 </nav>
 
 <div id="LoginForm">
-    <h2>Log in to use specific features</h2>
-    <form>
-        <label>Username: <input id="emailInput" type="email" placeholder="email"/>
-            <div class="invalidEmail">Please enter a valid email</div>
-        </label>
+    <h2 id="SecuirtyWarning">Don't use any actual passwords here. There is no security implemented.</h2>
+    <h2>Log in to use the app</h2>
+    <form id="login">
+        <label>Username: <input id="usernameInput" type="text" placeholder="username"/></label>
         <p><label>Password: <input id="passwordInput" type="password" placeholder="password"/></label></p>
-        <br/>
-        <p>Test that you're not a robot. Enter 'sun' or 'rain'</p>
-        <p><label>Test: <input id='secretInput' type="text" pattern="sun|rain" placeholder="secret word"/></label></p>
-        <input id="PasswordSubmit" type="submit" value="login"/>
     </form>
+    <input id="PasswordSubmit" type="submit" value="login"/>
+    <p id="BadLogin" class="BadSubmit">Bad login information.</p>
     <br/> <br/>
+</div>
 
-    <a href="https://david-keith.github.io/GeoInfo/app">Continue without logging in</a>
+<div id="RegisterForm">
+    <h2>Register</h2>
+    <form id="register">
+        <label>Username: <input id="usernameRegister" type="text" placeholder="username"/></label>
+        <p><label>Password: <input id="passwordRegister" type="password" placeholder="password"/></label></p>
+        <br/>
+    </form>
+    <input id="RegisterSubmit" type="submit" value="register"/>
+    <input id="FirebaseSet" type="submit" value="firebase set"/>
+    <input id="FirebasePush" type="submit" value="firebase push"/>
+    <p id="BadRegister" class="BadSubmit">User already exists. Please try again.</p>
 </div>
 <div id="UserLoggedIn">
     <p>You are logged in, redirecting you to the app.</p>
 </div>
-<script>
-    var emailInput = document.getElementById("emailInput").value;
-    var passwordInput = document.getElementById("passwordInput").value;
-    var secretInput = document.getElementById("secretInput").value;
-</script>
 </body>
 </html>

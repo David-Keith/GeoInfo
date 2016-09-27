@@ -30,8 +30,8 @@
             <td rowspan="2"><img class="interactive" alt="Google maps"
                                  src="https://lh3.googleusercontent.com/MOf9Kxxkj7GvyZlTZOnUzuYv0JAweEhlxJX6gslQvbvlhLK5_bSTK6duxY2xfbBsj43H=w300"/>
             </td>
-            <td rowspan="2"><img class="interactive" alt="Weather forecast"
-                                 src="http://worldheadway.com/wp-content/uploads/2015/04/weather.jpg"/></td>
+            <td rowspan="2"><img id="weather" class="interactive" alt="Weather forecast"
+                                 src="http://www.weather.gov/images/phi/features/weather_symbols.png"/></td>
         </tr>
         <tr></tr>
         <tr>
@@ -59,6 +59,16 @@
 <div id="UserNotLoggedIn">
     <p>You are not logged in, redirecting you to the login page.</p>
 </div>
+
+<div id="mapContainer"><div id="map"></div> <div id="forecastContainer"></div></div>
+
+<!-- Dark Sky API usage terms requires this link to be displayed somewhere on your app -->
+<a href="https://darksky.net/poweredby/">Forecasts Powered by Dark Sky</a>
+
+<!-- Link to the google maps API using our API key and call the given callback function. 
+	 This should be hidden in a js file! -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPJt-VSH9xFqISuHq3Dff_lIu4eakY9rs&callback=initMap"
+async defer></script>
 
 </body>
 </html>
