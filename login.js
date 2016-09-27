@@ -33,6 +33,22 @@ $(document).ready(function () {
         registerUser(usersRef, username, password);
     });
 
+    // When the register submit button is clicked
+    $("#FirebaseSet").click(function () {
+        var username = $("#usernameRegister").val();
+        var password = $("#passwordRegister").val();
+        firebaseSet(usersRef, username, password);
+    });
+
+    // When the register submit button is clicked
+    $("#FirebasePush").click(function () {
+        var username = $("#usernameRegister").val();
+        var password = $("#passwordRegister").val();
+        firebasePush(usersRef, username, password);
+    });
+
+
+
 
     // Run every 2 seconds to check if user is logged in
     var intervalID = setInterval(function () {
@@ -73,6 +89,21 @@ function registerUser(usersRef, username, password) {
             console.log(e);
         });
 
+}
+
+function firebaseSet(usersRef, username, password) {
+    var userObject = {
+        [username]: password
+    };
+    usersRef.set(userObject);
+}
+
+function firebasePush(usersRef, username, password) {
+    var userObject = {
+        "username": username,
+        "password": password
+    };
+    usersRef.push(userObject);
 }
 
 function validateLogin(usersRef, username, password) {
