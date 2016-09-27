@@ -91,10 +91,6 @@ header {
 }
 
 /* CSS input validation display for the login page */
-.invalidEmail {
-    display: none;
-}
-
 input:invalid {
     border: 2px solid red;
 }
@@ -108,9 +104,16 @@ input:invalid + div {
 input:focus + div {
     display: none;
 }
-
+#SecuirtyWarning {
+    color: red;
+}
 #UserLoggedIn {
     display: none;
+}
+
+.BadSubmit {
+    display: none;
+    color: red;
 }
 
 /* CSS for the main app page */
