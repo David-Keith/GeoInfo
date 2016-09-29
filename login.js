@@ -8,11 +8,11 @@ $(document).ready(function () {
     }
     // Initialize Firebase
     var config = {
-        apiKey: "AIzaSyBWptvaxV4NI5AKYIl1XM6sWPYD9xLikmg",
-        authDomain: "geoinfo-15e65.firebaseapp.com",
-        databaseURL: "https://geoinfo-15e65.firebaseio.com",
-        storageBucket: "geoinfo-15e65.appspot.com",
-        messagingSenderId: "654165032231"
+        apiKey: "AIzaSyD2UUPgwcNq70p5B7GfpaQqiIZOmJNPFjs",
+		authDomain: "my-project-1474597391583.firebaseapp.com",
+		databaseURL: "https://my-project-1474597391583.firebaseio.com",
+		storageBucket: "my-project-1474597391583.appspot.com",
+		messagingSenderId: "32110869379"
     };
     firebase.initializeApp(config);
     var usersRef = firebase.database().ref('users');
@@ -72,13 +72,17 @@ function goToApp() {
 }
 
 function registerUser(usersRef, username, password) {
-    var userObject = {
-      [username]: password
-    };
+    // var userObject = {
+      // [username]: password
+    // };
+	
     usersRef.child(username).once("value")
         .then( function(data){
             if (data.val() === null)  { // User not in system
-                usersRef.update(userObject); // Add user to database
+				usersRef.child(username).set({
+					password : password
+				});
+                // usersRef.update(userObject); // Add user to database
                 $("#BadRegister").hide()
             }
             else { // User already in system
@@ -108,7 +112,7 @@ function firebasePush(usersRef, username, password) {
 
 function validateLogin(usersRef, username, password) {
     var databasePassword;
-    usersRef.child(username).once("value")
+    usersRef.child(username).child('password').once("value")
         .then( function(data){
             databasePassword = data.val();
             if (databasePassword === null || password !== databasePassword) { // User not in system or password wrong
@@ -117,6 +121,7 @@ function validateLogin(usersRef, username, password) {
             }
             else {
                 sessionStorage.setItem("isLoggedIn", "true");
+				sessionStorage.setItem("username", username);
                 $("#BadLogin").hide();
             }
 

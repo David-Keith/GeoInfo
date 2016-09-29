@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <title>GeoInfo - Weather</title>
     <link rel="stylesheet" type="text/css" href="main.css">
+	<script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
     <script src="app.js"></script>
 </head>
@@ -41,14 +42,6 @@
     </table>
 
     <section>
-        <!-- selectable menu may be removed... -->
-        <p>Saved locations:
-            <select>
-                <option>Saved location1</option>
-                <option selected="selected">Saved location2</option>
-                <option>Saved location3</option>
-            </select>
-        </p>
         <button id="save">Save Location</button>
 
         <!-- html for new saved locations will be dynamically generated here with js -->
