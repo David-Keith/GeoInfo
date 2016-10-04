@@ -2,10 +2,19 @@
  * To control the html login page
  */
 "use strict";
+
 $(document).ready(function () {
     if (sessionStorage.getItem("isLoggedIn") == undefined) {
         sessionStorage.setItem("isLoggedIn", "false");
     }
+
+    // ReactDOM.render(
+    //     <BadLogin username="" />,
+    //     document.getElementById('BadLoginParent')
+    // );
+    $("#BadLogin").hide();
+
+
     // Initialize Firebase
     var config = {
         apiKey: "AIzaSyD2UUPgwcNq70p5B7GfpaQqiIZOmJNPFjs",
@@ -16,8 +25,6 @@ $(document).ready(function () {
     };
     firebase.initializeApp(config);
     var usersRef = firebase.database().ref('users');
-    // registerUser(usersRef, "jim", "secret_password");
-    // var validLogin = validateLogin(usersRef, "tim", "secret_password");
 
     // When the login submit button is clicked
     $("#PasswordSubmit").click(function () {
@@ -33,26 +40,10 @@ $(document).ready(function () {
         registerUser(usersRef, username, password);
     });
 
-    // When the register submit button is clicked
-    $("#FirebaseSet").click(function () {
-        var username = $("#usernameRegister").val();
-        var password = $("#passwordRegister").val();
-        firebaseSet(usersRef, username, password);
-    });
-
-    // When the register submit button is clicked
-    $("#FirebasePush").click(function () {
-        var username = $("#usernameRegister").val();
-        var password = $("#passwordRegister").val();
-        firebasePush(usersRef, username, password);
-    });
-
-
-
-
     // Run every 2 seconds to check if user is logged in
     var intervalID = setInterval(function () {
         if (sessionStorage.getItem("isLoggedIn") === "true") {
+
             goToApp();
         }
     }, 2000);
@@ -61,9 +52,15 @@ $(document).ready(function () {
 
 // Redirect user to application
 function goToApp() {
+    ReactDOM.render(
+    <LoginMessage />,
+        document.getElementById('UserLoggedIn')
+);
+
     $("#LoginForm").hide();
     $("#RegisterForm").hide();
     $("#UserLoggedIn").show();
+
 
     // Go to app after 3.5 seconds
     window.setTimeout(function () {
@@ -83,10 +80,15 @@ function registerUser(usersRef, username, password) {
 					password : password
 				});
                 // usersRef.update(userObject); // Add user to database
-                $("#BadRegister").hide()
+                $("#BadRegisterParent").hide()
             }
             else { // User already in system
-                $("#BadRegister").show();
+                ReactDOM.render(
+                    <UserAlreadyExists username={username}/>,
+                    document.getElementById('BadRegisterParent')
+                );
+                $("#BadRegisterParent").show();
+
             }
         })
         .catch(function(e){
@@ -95,27 +97,24 @@ function registerUser(usersRef, username, password) {
 
 }
 
-function firebaseSet(usersRef, username, password) {
-    var userObject = {
-        [username]: password
-    };
-    usersRef.set(userObject);
-}
-
-function firebasePush(usersRef, username, password) {
-    var userObject = {
-        "username": username,
-        "password": password
-    };
-    usersRef.push(userObject);
-}
-
 function validateLogin(usersRef, username, password) {
     var databasePassword;
     usersRef.child(username).child('password').once("value")
         .then( function(data){
             databasePassword = data.val();
-            if (databasePassword === null || password !== databasePassword) { // User not in system or password wrong
+            if (databasePassword === null ) { // User not in system or password wrong
+                ReactDOM.render(
+                    <BadLogin username={username} errorSelector="NoSuchUser"/>,
+                    document.getElementById('BadLogin')
+                );
+                sessionStorage.setItem("isLoggedIn", "false");
+                $("#BadLogin").show();
+            }
+            else if (password !== databasePassword) {
+                ReactDOM.render(
+                    <BadLogin username={username} errorSelector="BadPassword"/>,
+                    document.getElementById('BadLogin')
+                );
                 sessionStorage.setItem("isLoggedIn", "false");
                 $("#BadLogin").show();
             }
@@ -130,3 +129,56 @@ function validateLogin(usersRef, username, password) {
             console.log(e);
         });
 }
+
+var LoginMessage = React.createClass({
+    render: function () {
+        return <p> Welcome, {sessionStorage.getItem("username")}! You are now logged in. </p>;
+    }
+});
+
+var UserAlreadyExists = React.createClass({
+    render: function () {
+        return <p id="BadRegister">User {this.props.username} already exists. Please try another username.</p>;
+    }
+});
+
+var BadLogin = React.createClass({
+    render: function () {
+        if (this.props.errorSelector ==="NoSuchUser") {
+            return (
+                <div id="BadLogin">
+                    <NoSuchUser username={this.props.username}/>
+                </div>
+            );
+        }
+        else if (this.props.errorSelector ==="BadPassword") {
+            return (
+                <div id="BadLogin">
+                    <BadPassword username={this.props.username}/>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div id="BadLogin">
+                </div>
+            );
+        }
+    }
+});
+
+
+var NoSuchUser = React.createClass({
+    render: function () {
+        return <p id="NoSuchUer">User {this.props.username} doesn't exist.</p>;
+    }
+});
+
+var BadPassword = React.createClass({
+    render: function () {
+        return <p id="BadPassword">Wrong password for {this.props.username}.</p>;
+    }
+});
+
+
+

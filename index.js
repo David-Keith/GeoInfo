@@ -1,6 +1,7 @@
 /*
  * Code for the main home page
  */
+"use strict";
 
 // When a user clicks the about button, info about the site is shown if not already. This action is added to the history stack
 $(document).ready(function() {
