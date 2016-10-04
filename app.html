@@ -6,8 +6,15 @@
     <meta charset="utf-8">
     <title>GeoInfo - Weather</title>
     <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="https://fb.me/react-15.0.0.js"></script>
+    <script src="https://fb.me/react-dom-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
+    <!--<script type="text/babel" src="app.js"></script>-->
     <script src="app.js"></script>
+
 </head>
 
 <body>
@@ -41,18 +48,10 @@
     </table>
 
     <section>
-        <!-- selectable menu may be removed... -->
-        <p>Saved locations:
-            <select>
-                <option>Saved location1</option>
-                <option selected="selected">Saved location2</option>
-                <option>Saved location3</option>
-            </select>
-        </p>
         <button id="save">Save Location</button>
 
         <!-- html for new saved locations will be dynamically generated here with js -->
-        <div class="savedLocations"></div>
+        <div id="SavedLocationsParentDiv" class="savedLocations"></div>
 
     </section>
 </div>
