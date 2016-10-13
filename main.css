@@ -167,3 +167,20 @@ html, body {
 	margin: 0;
 	padding: 0;
 }
+
+/*For d3 js data visualization*/
+.chart div {
+    font: 10px sans-serif;
+    background-color: steelblue;
+    text-align: right;
+    padding: 3px;
+    margin: 1px;
+    color: white;
+}
+/*.bar {*/
+    /*fill: steelblue;*/
+/*}*/
+
+/*.axis path {*/
+    /*display: none;*/
+/*}*/

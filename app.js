@@ -28,6 +28,17 @@
 // }
 // });
 
+var d3Data = []; // Holds data for d3 js visualization
+var d3Vis = d3.select(".chart")
+        .selectAll("div")
+        .data(d3Data)
+        .style("width", function (d) {
+            return d * 10 + "px";
+        })
+        .text(function (d) {
+            console.log("d3 " + d3Data);
+            return d;
+        });
 /************************************************************
  *
  * Map and Forecast
@@ -44,36 +55,36 @@ var savedResults; //save the results that are generated for a reverse geocoded a
 // Initialize the google map centered on GMU
 function initMap() {
     var gmu = {
-        lat : 38.83,
-        lng : -77.3076
+        lat: 38.83,
+        lng: -77.3076
     };
     map = new google.maps.Map(document.getElementById('map'), {
-        center : gmu, //center map on GMU
-        zoom : 4, //start map at this zoom
-        draggableCursor : "auto" //use default mouse cursor instead of hand cursor when not dragging
+        center: gmu, //center map on GMU
+        zoom: 4, //start map at this zoom
+        draggableCursor: "auto" //use default mouse cursor instead of hand cursor when not dragging
     });
 }
+initMap();
 
 // The event listener for when the map is clicked
-$(document).ready(function () {
-    google.maps.event.addListener(map, 'click', function (event) {
-        //if a marker is already displayed on the map, clear it and return
-        if (markerDisplayed) {
-            marker.setMap(null); //clear the marker
-            markerDisplayed = false;
-            return;
-        }
-        //otherwise add a marker and info window of the current location and request the forecast there
-        addMarker(event.latLng, map);
-        var geocoder = new google.maps.Geocoder;
-        var infowindow = new google.maps.InfoWindow;
+// $(document).ready(function () {
+google.maps.event.addListener(map, 'click', function (event) {
+    //if a marker is already displayed on the map, clear it and return
+    if (markerDisplayed) {
+        marker.setMap(null); //clear the marker
+        markerDisplayed = false;
+        return;
+    }
+    //otherwise add a marker and info window of the current location and request the forecast there
+    addMarker(event.latLng, map);
+    var geocoder = new google.maps.Geocoder;
+    var infowindow = new google.maps.InfoWindow;
 
 
-
-        geocodeLatLng(event.latLng, geocoder, map, infowindow); //show info window of location
-        requestForecast(darkURL + event.latLng.toUrlValue()) //request and update current forecast
-    })
-});
+    geocodeLatLng(event.latLng, geocoder, map, infowindow); //show info window of location
+    requestForecast(darkURL + event.latLng.toUrlValue()) //request and update current forecast
+})
+// });
 
 // Adds a marker to the map
 function addMarker(location, map) {
@@ -81,15 +92,15 @@ function addMarker(location, map) {
     // Add the marker at the clicked location
     markerDisplayed = true;
     marker = new google.maps.Marker({
-        position : location,
-        map : map
+        position: location,
+        map: map
     });
 }
 
 // Translate a lat/lng location object into a human-readable address and display it on the map
 function geocodeLatLng(loc, geocoder, map, infowindow) {
     geocoder.geocode({
-        'location' : loc
+        'location': loc
     }, function (results, status) {
         if (status === 'OK') {
             //display an infowindow on the map for the current location
@@ -109,13 +120,13 @@ function geocodeLatLng(loc, geocoder, map, infowindow) {
 // Perform the ajax http request to dark sky api. url should be 'https://api.darksky.net/forecast/[key]/[latitude],[longitude]'
 function requestForecast(url) {
     $.ajax({
-        url : url,
+        url: url,
         // The name of the callback parameter
-        jsonp : "callback",
+        jsonp: "callback",
         // Tell jQuery we're expecting JSONP
-        dataType : "jsonp",
+        dataType: "jsonp",
         // Work with the response by calling the given function
-        success : displayForecast
+        success: displayForecast
     })
 };
 
@@ -125,7 +136,17 @@ function displayForecast(data) {
     forecast.savedAddress = savedResults[1].formatted_address; //keep track of human readable address for this forecast
     var curr = forecast.currently.icon; //a simple string representation of all weather descriptions
 
+    for(let i = 0; i < forecast.daily.data.length; i++) {
+        d3Data[i] = (forecast.daily.data[i].temperatureMax);
+    }
+
+    console.log(d3Data);
+    updateVis();
+    // Update the DOM forecast display using React class Fcast, defined below
+    ReactDOM.render(<Fcast />, document.getElementById('forecastContainer'));
+
     // these are all the possible weather descriptions dark sky returns
+    // want to display an icon for these conditions eventually
     if (curr === "clear-day") console.log("clear day!");
     else if (curr === "clear-night") console.log("clear night!");
     else if (curr === "rain") console.log("rain! :(");
@@ -138,9 +159,26 @@ function displayForecast(data) {
     else if (curr === "partly-cloudy-night") console.log("cloudy night");
     else console.log("unknown weather: " + curr);
 
-    // for now, can just show a simple forecast on the screen. later should do something more interesting with this data
-    $('#forecastContainer').html("<h1>-Current Forecast-<br/>" + curr + "<br/>Temp: " + forecast.currently.temperature + "</h1>");
+// 	// for now, can just show a simple forecast on the screen. later should do something more interesting with this data
+// 	$('#forecastContainer').html("<h1>-Current Forecast-<br/>" + curr + "<br/>Temp: " + forecast.currently.temperature + "</h1>");
 }
+
+// React class to update UI on forecast changes. To use appropriately, setState() should be used, NOT this.state = ...
+// in render(). To do this, need to somehow register setState() to be called after the forecast API callback returns
+class Fcast extends React.Component {
+    constructor() {
+        super();
+        this.state = {forecast: forecast};
+    }
+
+    render() {
+        this.state.forecast = forecast;
+        if (this.state.forecast === undefined) return null;
+        return (<div><h1>-Current Forecast-<br/> {this.state.forecast.currently.icon}
+            <br/>Temp: {this.state.forecast.currently.temperature }</h1></div>);
+    }
+}
+
 
 /************************************************************
  *
@@ -154,8 +192,8 @@ var savedLocationsRef; //reference to the database of saved locations for the cu
 // Need to wait for the page to be loaded, then run rest of the code
 $(document).ready(function () {
 
+// If not user is logged in, don't continue. Don't need to offer the ability to save/go to saved locations
     if (sessionStorage.getItem("isLoggedIn") == undefined || sessionStorage.getItem("isLoggedIn") === false) {
-        $('#save').prop('disabled', true);
         return;
     }
 
@@ -172,51 +210,86 @@ $(document).ready(function () {
 // Reference to currently logged in user's saved locations in firebase
     savedLocationsRef = firebase.database().ref('users/' + sessionStorage.getItem("username") + '/' + 'savedLocations');
 
-// Save location button event handler simply forwards to firebase event handler
-// by adding a new location to the database
-    $('#save').click(function() {
-        // save current location's forecast in firebase (won't work if undefined)
-        savedLocationsRef.push(forecast);
-    });
-
 // Firebase event handler for when a new location is added to the database
-    savedLocationsRef.on("child_added", function(data) {
+    savedLocationsRef.on("child_added", function (data) {
         // users can currently save up to 3 locations
         if ((numLocationsSaved >= locationCapacity)) return;
         numLocationsSaved++;
 
         // disable the save button when the capacity of saved locations is reached
         if (numLocationsSaved >= locationCapacity)
-            $('#save').prop('disabled', true);
-
-        // add the saved location to the page
-        addSavedLocation(data.key, data.val());
-    });
-
-// Firebase event handler for when a saved location is modified
-    savedLocationsRef.on("child_changed", function(data) {
-        var location = data.val().latitude.toString() + ", " + data.val().longitude.toString();
-
-        // add the DOM/html to the page
-        $('div[data-index="' + data.key + '"]').html('<button onClick="goToLocation(this)">Go</button> Saved Location: '
-            + location + '<button class="deleteButton" onclick="deleteItem(this.parentElement)">&#x2716;</button></div>');
-
-        // ReactDOM.render(
-        //     <SaveLocation elem={data} key={data.key} value={location}/>,
-        //     document.getElementById('SavedLocationsParentDiv')
-        // );
+            $('#saveButton').prop('disabled', true);
     });
 
 // Firebase event handler for when a saved location is removed
-    savedLocationsRef.on("child_removed", function(data) {
-        // find the DOM object removed and remove it from firebase's database
-        $('div[data-index="' + data.key + '"').remove();
-
+    savedLocationsRef.on("child_removed", function (data) {
         // update the locations counter and restore the save button
         numLocationsSaved--;
         if (numLocationsSaved < locationCapacity)
-            $('#save').prop('disabled', false);
+            $('#saveButton').prop('disabled', false);
     });
+
+// })
+
+// React component to represent a user's list of saved locations
+    var SavedLocationsList = React.createClass({
+        render: function () {
+            var _this = this; //In the subcomponent, "this" will refer to window, so need to save "this" here
+
+            // For each saved location there will be a button to go to it, address name, and a button to delete it
+            var createItem = function (item, key) {
+                return (<div key={key}>
+                    <button onClick={_this.props.goToLoc.bind(null, item)}>Go</button>
+                    {item.savedAddress}
+                    <button onClick={_this.props.removeItem.bind(null, item['.key'])}>&#x2716;</button>
+                </div>);
+            };
+            return <ul>{this.props.items.map(createItem)}</ul>;
+        }
+    });
+
+// React component that contains SavedLocationsList and a button to save a new location
+    var SavedLocationsApp = React.createClass({
+        mixins: [ReactFireMixin],
+        getInitialState: function () {
+            return {items: []};
+        },
+
+        // Binds React to the specified firebase database which loads the database and tracks changes
+        componentWillMount: function () {
+            this.fireRef = firebase.database().ref('users/' + sessionStorage.getItem("username") + '/' + 'savedLocations');
+
+            this.bindAsArray(this.fireRef, "items");
+        },
+        // onChange: function (fireKey, event) {
+        // 	this.fireRef.child(fireKey).set({"text": event.target.value});
+        // },
+
+        // forwards removing to the firebase event listener above
+        removeItem: function (key) {
+            this.fireRef.child(key).remove();
+        },
+
+        // forwards adding to the firebase event listener above
+        handleAdd: function (e) {
+            this.fireRef.push(forecast);
+        },
+        // when a user clicks to go to a location, forward that call to goToLocation
+        goToLoc: function (item) {
+            goToLocation(item['.key']);
+        },
+        render: function () {
+            return (
+                <div>
+                    <u>Saved Locations</u>
+                    <SavedLocationsList items={this.state.items} removeItem={this.removeItem} goToLoc={this.goToLoc}/>
+                    <button id={'saveButton'} onClick={this.handleAdd}>Save</button>
+                </div>
+            );
+        }
+    });
+
+    ReactDOM.render(<SavedLocationsApp />, document.getElementById('SavedLocationsParentDiv'));
 
 })
 
@@ -224,33 +297,13 @@ $(document).ready(function () {
  * Other functions
  --------*/
 
-// var SaveLocation = React.createClass({
-//     render: function () {
-//         return <div class="savedLocation" data-index={this.props.key}><button onClick={goToLocation(this.props.elem)}>Go</button> Saved Location:
-//             {this.props.value} <button class="deleteButton" onclick={deleteItem(this.props.elem.parentElement)}>&#x2716;</button> </div>;
-//     }
-// });
-
-// Updates the DOM by adding a saved location to the page
-function addSavedLocation(key, value) {
-    // add the location to the list with a goto and delete button
-    // store the firebase key of the item in the html data-index for the object
-    $(".savedLocations").append(
-        '<div class="savedLocation" data-index=' + key + '><button onClick="goToLocation(this)">Go</button> Saved Location: '
-        + value.savedAddress + '<button class="deleteButton" onclick="deleteItem(this.parentElement)">&#x2716;</button></div>');
-
-    // ReactDOM.render(
-    //     <SaveLocation k/>,
-    //     document.getElementById('SavedLocationsParentDiv')
-    // );
-}
-
 // When a user clicks the button to go to a saved location, update the map/forecast
-function goToLocation(elem) {
+// based on the key for the location saved in the database
+function goToLocation(key) {
     // Find the location stored in the database with the key that matches elem's parent index
-    savedLocationsRef.child(elem.parentElement.dataset.index)
+    savedLocationsRef.child(key)
         .once("value")
-        .then(function(snapshot) {
+        .then(function (snapshot) {
             // get the data for corresponding location
             var currentLat = snapshot.val().latitude;
             var currentLng = snapshot.val().longitude;
@@ -266,32 +319,26 @@ function goToLocation(elem) {
             geocodeLatLng(currentLatLng, geocoder, map, infowindow); //show info window of location
         });
 
-    var updatedLocation = elem.parentElement.getAttribute('data-index');
-    $('#current').html("Saved location: " + updatedLocation);
+    $('#current').html("Saved location: " + key);
 
     //make a simple little animation to mock the actual update of the map and forecast
     $(".interactive").animate({
-        opacity : 0.25,
-        transform : "translate(4%, 4%)",
-        transition : "0s"
+        opacity: 0.25,
+        transform: "translate(4%, 4%)",
+        transition: "0s"
     })
         .animate({
-            opacity : 1,
-            transform : "translate(-4%, -4%)",
-            transition : "0s"
+            opacity: 1,
+            transform: "translate(-4%, -4%)",
+            transition: "0s"
         });
 }
 
-// Remove location button event handler simply forwards to firebase event handler
-// by removing a location from the database
-function deleteItem(divElem) {
-    savedLocationsRef.child(divElem.dataset.index).remove();
-}
-
+// UNUSED: for know-how purposes only
 // Return the total number of locations saved in the database for the user. (no simpler way to do this)
 function numLocationsInDatabase() {
     var num;
-    savedLocationsRef.once("value", function(snapshot) {
+    savedLocationsRef.once("value", function (snapshot) {
         num = snapshot.numChildren();
         console.log("saved positions: " + num);
     });
@@ -307,3 +354,121 @@ function numLocationsInDatabase() {
 
     return num;
 }
+
+function updateVis() {
+    console.log(d3Data);
+    d3Vis = d3.select(".chart")
+        .selectAll("div")
+        .data(d3Data)
+        .enter().append("div")
+        .style("width", function(d)
+        { return d * 10 + "px"; })
+        .text(function(d) {console.log("d3 " + d3Data); return d; });
+    d3Vis.exit().remove();
+
+}
+
+// // d3 js data visualization
+// // Based on stacked bar chart example
+// // https://bl.ocks.org/mbostock/3886208
+// var svg = d3.select("svg"),
+//     margin = {top: 20, right: 20, bottom: 30, left: 40},
+//     width = +svg.attr("width") - margin.left - margin.right,
+//     height = +svg.attr("height") - margin.top - margin.bottom,
+//     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//
+// var x = d3.scaleBand()
+//     .rangeRound([0, width])
+//     .padding(0.1)
+//     .align(0.1);
+//
+// var y = d3.scaleLinear()
+//     .rangeRound([height, 0]);
+//
+// var z = d3.scaleOrdinal()
+//     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+//
+// var stack = d3.stack();
+//
+//
+// data.sort(function (a, b) {
+//     return b.total - a.total;
+// });
+//
+// x.domain(data.map(function (d) {
+//     return d.State;
+// }));
+// y.domain([0, d3.max(data, function (d) {
+//     return d.total;
+// })]).nice();
+// z.domain(data.columns.slice(1));
+//
+// g.selectAll(".serie")
+//     .data(stack.keys(data.columns.slice(1))(data))
+//     .enter().append("g")
+//     .attr("class", "serie")
+//     .attr("fill", function (d) {
+//         return z(d.key);
+//     })
+//     .selectAll("rect")
+//     .data(function (d) {
+//         return d;
+//     })
+//     .enter().append("rect")
+//     .attr("x", function (d) {
+//         return x(d.data.State);
+//     })
+//     .attr("y", function (d) {
+//         return y(d[1]);
+//     })
+//     .attr("height", function (d) {
+//         return y(d[0]) - y(d[1]);
+//     })
+//     .attr("width", x.bandwidth());
+//
+// g.append("g")
+//     .attr("class", "axis axis--x")
+//     .attr("transform", "translate(0," + height + ")")
+//     .call(d3.axisBottom(x));
+//
+// g.append("g")
+//     .attr("class", "axis axis--y")
+//     .call(d3.axisLeft(y).ticks(10, "s"))
+//     .append("text")
+//     .attr("x", 2)
+//     .attr("y", y(y.ticks(10).pop()))
+//     .attr("dy", "0.35em")
+//     .attr("text-anchor", "start")
+//     .attr("fill", "#000")
+//     .text("Population");
+//
+// var legend = g.selectAll(".legend")
+//     .data(data.columns.slice(1).reverse())
+//     .enter().append("g")
+//     .attr("class", "legend")
+//     .attr("transform", function (d, i) {
+//         return "translate(0," + i * 20 + ")";
+//     })
+//     .style("font", "10px sans-serif");
+//
+// legend.append("rect")
+//     .attr("x", width - 18)
+//     .attr("width", 18)
+//     .attr("height", 18)
+//     .attr("fill", z);
+//
+// legend.append("text")
+//     .attr("x", width - 24)
+//     .attr("y", 9)
+//     .attr("dy", ".35em")
+//     .attr("text-anchor", "end")
+//     .text(function (d) {
+//         return d;
+//     });
+//
+//
+// function type(d, i, columns) {
+//     for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
+//     d.total = t;
+//     return d;
+// }

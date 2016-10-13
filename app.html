@@ -10,10 +10,12 @@
     <script src="https://fb.me/react-dom-15.0.0.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
 
+    <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
-    <!--<script type="text/babel" src="app.js"></script>-->
-    <script src="app.js"></script>
+    <script src="https://cdn.firebase.com/libs/reactfire/1.0.0/reactfire.min.js"></script>
+    <script type="text/babel" src="app.js"></script>
+    <!-- <script src="app.js"></script> -->
 
 </head>
 
@@ -48,12 +50,13 @@
     </table>
 
     <section>
-        <button id="save">Save Location</button>
-
         <!-- html for new saved locations will be dynamically generated here with js -->
         <div id="SavedLocationsParentDiv" class="savedLocations"></div>
 
     </section>
+    <br/>
+    <div class="chart"> Chart that shows high temperatures for the next several days for the selected location</div>
+    <br/>
 </div>
 <div id="UserNotLoggedIn">
     <p>You are not logged in, redirecting you to the login page.</p>
@@ -66,7 +69,7 @@
 
 <!-- Link to the google maps API using our API key and call the given callback function. 
 	 This should be hidden in a js file! -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPJt-VSH9xFqISuHq3Dff_lIu4eakY9rs&callback=initMap"
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDPJt-VSH9xFqISuHq3Dff_lIu4eakY9rs"
 async defer></script>
 
 </body>
