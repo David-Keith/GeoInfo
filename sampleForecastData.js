@@ -1,4 +1,4 @@
-{
+var sampleForecast = {
 	"latitude" : 37.8267,
 	"longitude" : -122.4233,
 	"timezone" : "America/Los_Angeles",
