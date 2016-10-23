@@ -1,33 +1,77 @@
 /*
- * Code for the main home page
+ * Backend server code. Serves static pages in public directory (frontend)
+ * and authenticates Firebase actions.
  */
-"use strict";
 
-// When a user clicks the about button, info about the site is shown if not already. This action is added to the history stack
-$(document).ready(function() {
-    $('#about').click(function() {
-        // if info about the site is already displayed, do nothing
-        if (history.state != null && history.state.about === true) return;
+/****************************************************************/ 
+var firebase = require("firebase");
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser')
+app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: true
+}));
 
-        // otherwise add an object to the history stack so it knows its on #about, and show the hidden view
-        var aboutObject = {about: true};
-        history.pushState(aboutObject, 'about', '#about');
-        $('.info').show();
-    });
+// var port = process.env.port || 3000;
+
+firebase.initializeApp({
+    serviceAccount: "privkey.json",
+    databaseURL: "https://my-project-1474597391583.firebaseio.com"
+});
+// var fireRef = firebase.database().ref('users/' + sessionStorage.getItem("username") + '/' + 'savedLocations');
+var fireRef = firebase.database().ref('users/');
+
+app.set('port', (process.env.PORT || 5000));
+
+// app.get('/', function(request, response) {
+  // response.render('pages/index');
+// });
+
+app.post('/test', function(req, res) {
+	console.log("test received");
+	console.log(req.body.age);
+	// res.send("OK!", req);
+	res.send({name: "jack"});
 });
 
-// When a user goes back/forward in history to the main home page, ensure the info about the site is hidden
-window.addEventListener('popstate', function(e) {
-    var state = history.state;
-    if (state === null || state.about !== true) {
-        $('.info').hide();
-    }
+/****************************************************************
+* Server function to handle a request to log in a user. Reads a username and
+* password from client, validates that account on firebase, and responds to
+* the client with success or failure.
+****************************************************************/
+app.post('/login', function(req, res) {
+	var username = req.body.username; //username client submitted
+	var password = req.body.password; //password client submitted
+	var databasePassword; //will hold the password firebase finds for a given user
+	var resp = {valid: false}; //response object to send back to client after validation
+	console.log("login request received");
+	console.log(username, password);
+	
+    fireRef.child(username).child('password').once("value")
+        .then( function(data){
+            databasePassword = data.val();
+            if (databasePassword === null || password !== databasePassword) { // User not in system or password wrong
+				console.log("Invalid Firebase account");
+				res.send(resp);
+            }
+            else {
+                resp.valid = true;
+				console.log("Valid Firebase account");
+				res.send(resp);
+            }
+
+        })
+        .catch(function(e){
+            console.log(e);
+        });
 });
 
-// When a user loads the home page in the /#about section, ensure info about the site is shown
-$(document).ready(function() {
-    var state = history.state;
-    if (state !== null && state.about === true) {
-        $('.info').show();
-    }
+// Set the server to listen on the specified port
+app.listen(app.get('port'), function () {
+    console.log('Example app listening on port ', app.get('port'));
 });
+
+/****************************************************************/
+
+app.use(express.static('public'));

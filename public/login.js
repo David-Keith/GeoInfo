@@ -1,20 +1,37 @@
+/****************************************************************/
+/****************************************************************/
+/**
+* Sample shell code to get started using node.js backend server
+*/
+
+// Add a sample test button that simulates logging in a user. Real login button will 
+// need to actually read the username and password from the html log-in form.
+$(document).ready(function() {
+$('#LoginForm').append('<button onClick ="login()">testMe</button>');
+});
+
+// Function to make RESTful ajax call to login. Result can simply be stored
+// in sessionStorage cookie like done in validateLogin()
+function login() {
+	$.post("/login", {username: "david", password: "password"}, function(res) {
+		console.log(res);
+		if (res.valid) 
+			console.log("login success!");
+		else console.log("login fail");
+	})
+}
+
+/****************************************************************/
+/****************************************************************/
+
 /**
  * To control the html login page
  */
 "use strict";
-
 $(document).ready(function () {
     if (sessionStorage.getItem("isLoggedIn") == undefined) {
         sessionStorage.setItem("isLoggedIn", "false");
     }
-
-    // ReactDOM.render(
-    //     <BadLogin username="" />,
-    //     document.getElementById('BadLoginParent')
-    // );
-    $("#BadLogin").hide();
-
-
     // Initialize Firebase
     var config = {
         apiKey: "AIzaSyD2UUPgwcNq70p5B7GfpaQqiIZOmJNPFjs",
@@ -25,6 +42,8 @@ $(document).ready(function () {
     };
     firebase.initializeApp(config);
     var usersRef = firebase.database().ref('users');
+    // registerUser(usersRef, "jim", "secret_password");
+    // var validLogin = validateLogin(usersRef, "tim", "secret_password");
 
     // When the login submit button is clicked
     $("#PasswordSubmit").click(function () {
@@ -40,10 +59,26 @@ $(document).ready(function () {
         registerUser(usersRef, username, password);
     });
 
+    // When the register submit button is clicked
+    $("#FirebaseSet").click(function () {
+        var username = $("#usernameRegister").val();
+        var password = $("#passwordRegister").val();
+        firebaseSet(usersRef, username, password);
+    });
+
+    // When the register submit button is clicked
+    $("#FirebasePush").click(function () {
+        var username = $("#usernameRegister").val();
+        var password = $("#passwordRegister").val();
+        firebasePush(usersRef, username, password);
+    });
+
+
+
+
     // Run every 2 seconds to check if user is logged in
     var intervalID = setInterval(function () {
         if (sessionStorage.getItem("isLoggedIn") === "true") {
-
             goToApp();
         }
     }, 2000);
@@ -52,15 +87,9 @@ $(document).ready(function () {
 
 // Redirect user to application
 function goToApp() {
-    ReactDOM.render(
-    <LoginMessage />,
-        document.getElementById('UserLoggedIn')
-);
-
     $("#LoginForm").hide();
     $("#RegisterForm").hide();
     $("#UserLoggedIn").show();
-
 
     // Go to app after 3.5 seconds
     window.setTimeout(function () {
@@ -80,15 +109,10 @@ function registerUser(usersRef, username, password) {
 					password : password
 				});
                 // usersRef.update(userObject); // Add user to database
-                $("#BadRegisterParent").hide()
+                $("#BadRegister").hide()
             }
             else { // User already in system
-                ReactDOM.render(
-                    <UserAlreadyExists username={username}/>,
-                    document.getElementById('BadRegisterParent')
-                );
-                $("#BadRegisterParent").show();
-
+                $("#BadRegister").show();
             }
         })
         .catch(function(e){
@@ -97,24 +121,27 @@ function registerUser(usersRef, username, password) {
 
 }
 
+function firebaseSet(usersRef, username, password) {
+    var userObject = {
+        [username]: password
+    };
+    usersRef.set(userObject);
+}
+
+function firebasePush(usersRef, username, password) {
+    var userObject = {
+        "username": username,
+        "password": password
+    };
+    usersRef.push(userObject);
+}
+
 function validateLogin(usersRef, username, password) {
     var databasePassword;
     usersRef.child(username).child('password').once("value")
         .then( function(data){
             databasePassword = data.val();
-            if (databasePassword === null ) { // User not in system or password wrong
-                ReactDOM.render(
-                    <BadLogin username={username} errorSelector="NoSuchUser"/>,
-                    document.getElementById('BadLogin')
-                );
-                sessionStorage.setItem("isLoggedIn", "false");
-                $("#BadLogin").show();
-            }
-            else if (password !== databasePassword) {
-                ReactDOM.render(
-                    <BadLogin username={username} errorSelector="BadPassword"/>,
-                    document.getElementById('BadLogin')
-                );
+            if (databasePassword === null || password !== databasePassword) { // User not in system or password wrong
                 sessionStorage.setItem("isLoggedIn", "false");
                 $("#BadLogin").show();
             }
@@ -129,56 +156,3 @@ function validateLogin(usersRef, username, password) {
             console.log(e);
         });
 }
-
-var LoginMessage = React.createClass({
-    render: function () {
-        return <p> Welcome, {sessionStorage.getItem("username")}! You are now logged in. </p>;
-    }
-});
-
-var UserAlreadyExists = React.createClass({
-    render: function () {
-        return <p id="BadRegister">User {this.props.username} already exists. Please try another username.</p>;
-    }
-});
-
-var BadLogin = React.createClass({
-    render: function () {
-        if (this.props.errorSelector ==="NoSuchUser") {
-            return (
-                <div id="BadLogin">
-                    <NoSuchUser username={this.props.username}/>
-                </div>
-            );
-        }
-        else if (this.props.errorSelector ==="BadPassword") {
-            return (
-                <div id="BadLogin">
-                    <BadPassword username={this.props.username}/>
-                </div>
-            );
-        }
-        else {
-            return (
-                <div id="BadLogin">
-                </div>
-            );
-        }
-    }
-});
-
-
-var NoSuchUser = React.createClass({
-    render: function () {
-        return <p id="NoSuchUer">User {this.props.username} doesn't exist.</p>;
-    }
-});
-
-var BadPassword = React.createClass({
-    render: function () {
-        return <p id="BadPassword">Wrong password for {this.props.username}.</p>;
-    }
-});
-
-
-

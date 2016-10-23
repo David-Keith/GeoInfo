@@ -1,0 +1,48 @@
+<!-- This is the login page. Logged in users will be able to save locations on the map to quickly bring up again in the future.-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GeoInfo - Login</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+    <script src="login.js"></script>
+</head>
+
+<body>
+<nav>
+    <a href="/">Home</a>
+    <a href="/login.html">Login</a>
+    <a href="/app.html">App</a>
+</nav>
+
+<div id="LoginForm">
+    <h2 id="SecuirtyWarning">Don't use any actual passwords here. There is no security implemented.</h2>
+    <h2>Log in to use the app</h2>
+    <form id="login">
+        <label>Username: <input id="usernameInput" type="text" placeholder="username"/></label>
+        <p><label>Password: <input id="passwordInput" type="password" placeholder="password"/></label></p>
+    </form>
+    <input id="PasswordSubmit" type="submit" value="login"/>
+    <p id="BadLogin" class="BadSubmit">Bad login information.</p>
+    <br/> <br/>
+</div>
+
+<div id="RegisterForm">
+    <h2>Register</h2>
+    <form id="register">
+        <label>Username: <input id="usernameRegister" type="text" placeholder="username"/></label>
+        <p><label>Password: <input id="passwordRegister" type="password" placeholder="password"/></label></p>
+        <br/>
+    </form>
+    <input id="RegisterSubmit" type="submit" value="register"/>
+    <input id="FirebaseSet" type="submit" value="firebase set"/>
+    <input id="FirebasePush" type="submit" value="firebase push"/>
+    <p id="BadRegister" class="BadSubmit">User already exists. Please try again.</p>
+</div>
+<div id="UserLoggedIn">
+    <p>You are logged in, redirecting you to the app.</p>
+</div>
+</body>
+</html>
