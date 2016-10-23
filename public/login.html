@@ -5,9 +5,13 @@
     <meta charset="utf-8">
     <title>GeoInfo - Login</title>
     <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="https://fb.me/react-15.0.0.js"></script>
+    <script src="https://fb.me/react-dom-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
-    <script src="login.js"></script>
+    <script type="text/babel" src="login.js"></script>
 </head>
 
 <body>
@@ -25,7 +29,12 @@
         <p><label>Password: <input id="passwordInput" type="password" placeholder="password"/></label></p>
     </form>
     <input id="PasswordSubmit" type="submit" value="login"/>
-    <p id="BadLogin" class="BadSubmit">Bad login information.</p>
+    <div id="BadLoginParent">
+        <div id="BadLogin">
+            <p id="NoSuchUser" class="BadSubmit"></p>
+            <p id="BadPassword" class="BadSubmit"></p>
+        </div>
+    </div>
     <br/> <br/>
 </div>
 
@@ -37,12 +46,12 @@
         <br/>
     </form>
     <input id="RegisterSubmit" type="submit" value="register"/>
-    <input id="FirebaseSet" type="submit" value="firebase set"/>
-    <input id="FirebasePush" type="submit" value="firebase push"/>
-    <p id="BadRegister" class="BadSubmit">User already exists. Please try again.</p>
+    <div id="BadRegisterParent">
+        <p id="BadRegister" class="BadSubmit">User already exists. Please try again.</p>
+    </div>
 </div>
 <div id="UserLoggedIn">
-    <p>You are logged in, redirecting you to the app.</p>
+    <p>You are already logged in, redirecting you to the app.</p>
 </div>
 </body>
 </html>
