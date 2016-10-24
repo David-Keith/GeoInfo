@@ -188,6 +188,7 @@ class Fcast extends React.Component {
 var numLocationsSaved = 0; //keeps track of how many locations the user has saved
 var locationCapacity = 3; //the user can save up to this many locations
 var savedLocationsRef; //reference to the database of saved locations for the current user
+var userRef;
 
 // Need to wait for the page to be loaded, then run rest of the code
 $(document).ready(function () {
@@ -209,9 +210,10 @@ $(document).ready(function () {
 
 // Reference to currently logged in user's saved locations in firebase
     savedLocationsRef = firebase.database().ref('users/' + sessionStorage.getItem("username") + '/' + 'savedLocations');
+	userRef = firebase.database().ref('users/' + sessionStorage.getItem("username"));
 
 // Firebase event handler for when a new location is added to the database
-    savedLocationsRef.on("child_added", function (data) {
+    savedLocationsRef.on("child_added", function (data) {		
         // users can currently save up to 3 locations
         if ((numLocationsSaved >= locationCapacity)) return;
         numLocationsSaved++;
@@ -228,8 +230,51 @@ $(document).ready(function () {
         if (numLocationsSaved < locationCapacity)
             $('#saveButton').prop('disabled', false);
     });
+	
+	
+// Firebase event handler for when any new entry is added to a user's stored data
+	userRef.on("child_added", function (data) {
+		// console.log(data);
+		// Try to render an image if the user has one added/saved
+		renderProfilePic(data.val());
+	});
+	
+	// Same as add, but is called when replacing currently stored data
+	userRef.on("child_changed", function (data) {
+		renderProfilePic(data.val());
+	});
 
 // })
+
+// Render a user's profile pic if it exists and matches the given link
+function renderProfilePic(img) {
+	// check if an entry found for a user is an img entry matching their stored image link.
+	userRef.once("value", function (snapshot) {
+		if (img === snapshot.val().img) {
+			$('#profilePic').html('<div><img src="'+img+'" alt="Profile pic" height="256" width="256"/><br/></div>');
+		}
+    });
+}
+
+// Display the profile pic file upload form for a user that is logged in
+$('#profilePicForm').html('<u>Profile Pic</u><br/><form id="picForm" action="/pic" method="post" enctype="multipart/form-data"><input type="file" id="newFile" name="img" />'
+ + '<input type="submit" value="Upload" /><input type="hidden" name="user" value="' + sessionStorage.getItem("username") + '" /></form><br/>');
+
+ // When a user submits a profile pic file to upload, send the ajax REST request to the server
+$('#picForm').submit(function(e) {
+	e.preventDefault();
+
+	var formData = new FormData($("#picForm")[0]);
+	// console.log($("#picForm")[0]);
+	$.ajax({
+		url: "/pic",
+		type: "POST",
+		data: formData,
+		processData: false,
+		contentType: false
+
+	});
+});
 
 // React component to represent a user's list of saved locations
     var SavedLocationsList = React.createClass({
@@ -267,12 +312,22 @@ $(document).ready(function () {
 
         // forwards removing to the firebase event listener above
         removeItem: function (key) {
-            this.fireRef.child(key).remove();
+            // this.fireRef.child(key).remove();
+			
+			// HTTP Delete request since there is no $.delete function in jquery
+			$.ajax({
+				url: '/savedLocation',
+				type: 'DELETE',
+				data: {user: sessionStorage.getItem("username"), key: key}
+			});
         },
 
         // forwards adding to the firebase event listener above
         handleAdd: function (e) {
-            this.fireRef.push(forecast);
+			console.log(forecast.savedAddress);
+            // this.fireRef.push(forecast);
+			forecast.savedAddress = savedResults[1].formatted_address; //non-permanent ugly fix for race BUG in goToLocation()
+			$.post("/savedLocation", {user: sessionStorage.getItem("username"), savedLocation: forecast});
         },
         // when a user clicks to go to a location, forward that call to goToLocation
         goToLoc: function (item) {
@@ -301,23 +356,48 @@ $(document).ready(function () {
 // based on the key for the location saved in the database
 function goToLocation(key) {
     // Find the location stored in the database with the key that matches elem's parent index
-    savedLocationsRef.child(key)
-        .once("value")
-        .then(function (snapshot) {
-            // get the data for corresponding location
-            var currentLat = snapshot.val().latitude;
-            var currentLng = snapshot.val().longitude;
-            var currentLatLng = {lat: currentLat, lng: currentLng};
+	// This can be done through REST or directly from firebase since firebase has open read permissions
+	
+	// Doing it directly through the database:
+    // savedLocationsRef.child(key)
+        // .once("value")
+        // .then(function (snapshot) {
+            // // get the data for corresponding location
+            // var currentLat = snapshot.val().latitude;
+            // var currentLng = snapshot.val().longitude;
+            // var currentLatLng = {lat: parseFloat(currentLat), lng: parseFloat(currentLng)};
 
-            // update the current forecast shown
-            requestForecast(darkURL + currentLat + "," + currentLng);
+            // // update the current forecast shown
+            // requestForecast(darkURL + currentLat + "," + currentLng);
 
-            // update the map by going to the location being requested
-            var geocoder = new google.maps.Geocoder;
-            var infowindow = new google.maps.InfoWindow;
-            addMarker(currentLatLng, map); //add map marker
-            geocodeLatLng(currentLatLng, geocoder, map, infowindow); //show info window of location
-        });
+            // // update the map by going to the location being requested
+            // var geocoder = new google.maps.Geocoder;
+            // var infowindow = new google.maps.InfoWindow;
+            // addMarker(currentLatLng, map); //add map marker
+            // geocodeLatLng(currentLatLng, geocoder, map, infowindow); //show info window of location
+        // });
+		
+	// Doing it through a REST ajax call:
+	// BUG: race condition between geocodeLatLng and requestForecast on updating forecast.savedAddress!
+	// savedAddress may still be refering to the previous saved address, but forecast object still correct
+	$.post("/goto", {user: sessionStorage.getItem("username"), key: key}, function(res) {
+		// if a saved location wasn't found, fail
+		if (res == null || res == undefined) {
+			console.log("failed!");
+			return;
+		}
+		// else continue updating the map and forecast
+		var currentLatLng = {lat: parseFloat(res.lat), lng: parseFloat(res.lng)};
+
+		// update the map by going to the location being requested
+		var geocoder = new google.maps.Geocoder;
+		var infowindow = new google.maps.InfoWindow;
+		geocodeLatLng(currentLatLng, geocoder, map, infowindow); //show info window of location
+		addMarker(currentLatLng, map); //add map marker
+		
+		// update the current forecast shown
+		requestForecast(darkURL + res.lat + "," + res.lng);
+	});
 
     $('#current').html("Saved location: " + key);
 
