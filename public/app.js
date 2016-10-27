@@ -194,7 +194,7 @@ var userRef;
 $(document).ready(function () {
 
 // If not user is logged in, don't continue. Don't need to offer the ability to save/go to saved locations
-    if (sessionStorage.getItem("isLoggedIn") == undefined || sessionStorage.getItem("isLoggedIn") === false) {
+    if (sessionStorage.getItem("isLoggedIn") == undefined || sessionStorage.getItem("isLoggedIn") === "false") {
         return;
     }
 
@@ -249,6 +249,7 @@ $(document).ready(function () {
 // Render a user's profile pic if it exists and matches the given link
 function renderProfilePic(img) {
 	// check if an entry found for a user is an img entry matching their stored image link.
+	// if so, display their profile pic. there's probably a better way to do this than checking each entry
 	userRef.once("value", function (snapshot) {
 		if (img === snapshot.val().img) {
 			$('#profilePic').html('<div><img src="'+img+'" alt="Profile pic" height="256" width="256"/><br/></div>');
