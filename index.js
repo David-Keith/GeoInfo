@@ -146,6 +146,7 @@ app.post('/login', function(req, res) {
         })
         .catch(function(e){
             console.log(e);
+            res.status(403).send();
         });
 });
 
