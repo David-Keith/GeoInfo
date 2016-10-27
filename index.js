@@ -151,6 +151,41 @@ app.post('/login', function(req, res) {
 });
 
 /****************************************************************
+ * Server function to handle a request to log in a user. Reads a username and
+ * password from client, validates that account on firebase, and responds to
+ * the client with success or failure.
+ ****************************************************************/
+app.post('/register', function(req, res) {
+    var username = req.body.username; //username client submitted
+    var password = req.body.password; //password client submitted
+    var databasePassword; //will hold the password firebase finds for a given user
+    var resp = {valid: false}; //response object to send back to client after validation
+    console.log("login request received");
+    console.log(username, password);
+
+    fireRef.child(username).once("value")
+        .then( function(data){
+            if (data.val() === null)  { // User not in system
+                console.log("Adding user to firebase");
+                fireRef.child(username).set({
+                    password : password
+                });
+                resp.valid = true;
+                res.send(resp);
+            }
+            else { // User already in system
+                console.log("Username already in firebase; unable to add this user");
+                res.send(resp);
+            }
+        })
+        .catch(function(e){
+            console.log(e);
+            res.status(403).send();
+        });
+});
+
+
+/****************************************************************
 * Server handling requests from main app
 ****************************************************************/
 /*

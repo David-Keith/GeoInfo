@@ -74,38 +74,24 @@ function goToApp() {
     }, 3500);
 }
 
-function registerUser(
-    username, password) {
-    // var userObject = {
-      // [username]: password
-    // };
-	
-    usersRef.child(username).once("value")
-        .then( function(data){
-            if (data.val() === null)  { // User not in system
-				usersRef.child(username).set({
-					password : password
-				});
-                // usersRef.update(userObject); // Add user to database
-                $("#BadRegisterParent").hide()
-            }
-            else { // User already in system
-                ReactDOM.render(
-                    <UserAlreadyExists username={username}/>,
-                    document.getElementById('BadRegisterParent')
-                );
-                $("#BadRegisterParent").show();
-
-            }
-        })
-        .catch(function(e){
-            console.log(e);
-        });
-
+function registerUser(username, password) {
+    $.post("/register", {username: username, password: password}, function(res) {
+        console.log(res);
+        if (res.valid) {
+            // usersRef.update(userObject); // Add user to database
+            $("#BadRegisterParent").hide()
+        }
+        else {
+            ReactDOM.render(
+                <UserAlreadyExists username={username}/>,
+                document.getElementById('BadRegisterParent')
+            );
+            $("#BadRegisterParent").show();
+        }
+    })
 }
 
 function validateLogin(username, password) {
-    var databasePassword;
     $.post("/login", {username: username, password: password}, function(res) {
         console.log(res);
         if (res.valid) {
