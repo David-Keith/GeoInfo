@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "my-project-1474597391583",
+  "private_key_id": "7a6893aaa08004a391271f55a61adc826ff04857",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDREvuxfUUa/9xS\n65Lgb/yk6SC5s/vc91GEL7K8rDnl2zw9A8enCicdUJ4AvQ5xNxay+Ym3SgC2YH2R\n1U2/7gJTv3ZtWVHxtwJIIXdlq7tSV/FmbVQNjsvkQU4O8HSqQkTMb0G/XBSyRZPO\naHqMw4LtRR0S0pXiSc/HqZ2Mox1anQvIazAO4PRLNxxpRl5gTL5qgANGvx3+rbAv\niUuJFmwajkviQhgrfPOxQAkOHloZPuwg5thy5tasy7S2LaBkprFP90FF5wXmb1gS\nicV081cisQI4rAx3JtuzpN05ja31AprlJCI8C8t52T8ZvJn2ChQJlEBpwC5rdHSM\ntRirn9ZLAgMBAAECggEAKnRsX7JMYhsqpjvn62NSLjqYxpzhvBEMoIb/CIkAiMho\nBwvJcwYAw1cnfoblc9/34AgECxAf7OjTFtX1n8+48UCjz7ifhzHeaL9C+4ZP13y8\nLExvEQG6LXOFYks5pYknZ0wAUddk7H5scTGOER9yarPqH3Rbs0PByY2LzI8i2s9D\nI/cjXa1aIbkN99Nri3HyX/riRRdQ17BzCmOxM/tyMf91CM+OkVihrGs1CsHIxP85\ncTkapLj+XdVuywy9r8zTIDYCNvYNSC9TIKltca13no8dEK7UMIAUEhX//KuhODkU\nw0oQJ2nXH7qXXdtRyM+icn15WST20kVEVz0MBln4YQKBgQDtbf9Air1XJ4BIFPnA\neky2ikgYH44HFfwj9ZKldml+RgqZEv1/wH98fD/TGGL5RbzvGRGMOeNvdh9t5Cmy\nJkogQdr83WEoGqQGkdx0SYjYVh1KxExFN2VLFVyFqwjxIEQhQXo8RmHurEUMatNt\nosRqUJwLH9FOwkt/UKasyrOGvQKBgQDhbTrHpHFVSiBAa/jVoRrF5VmAMse2g7cc\nwPOUJpeSsrQKD7zMG8A8Pvykpc6zabT08VDgO2fV4n9nqsghGDmTpr/2SgwOTlw4\npjdRaurkwJkIe5vu91g27zCt/izAc0kwr+uyr1+PhNTtWJo7tkZK9f1KKvTMl8S5\nSKYYthpFpwKBgDKBhJvBJ5fDkllDBQG5wlnOPpnLFJZTSeiIU6KY9sXitlxrmrsz\nQqtDbvxDosIt4IvoBECVC9lpAjSJJYl89aW4/JFvsjwqtpujKYcfIVoLr315FlRe\n/VAkgiL5CBTq7TM5z3vE6Q4xXRrQGpum1StcbGU9ZnPfhtnVWS9GizvtAoGAbaEx\ndOYEN/ZUuP/JhBtVaeigHjiT568m3lT4IJSkIjPGWx5MMvdMBgCb3XbFj3tZBcZW\nDrbVSK9eRoxHx9CAL85ojN51/n8dWm97d50HnzgLNJTowM6JmC26/uMd4Hownfzw\nI3YmgyWWZ9cvKtr6VHpNNESvyNAGXBV4sYveOwECgYArSSwRuJt3a3BueOT6uaQf\ndhMpG8CAOPtxtmXpyjqw+HuEnSnjQnenJ17k/2NqUPcfGVkkZjFkxpxmbKbraosV\nC73B+hPug1GD4abMWyKM9Fdd8EpQi6A0X2cLljCJnjidHNqWzhg0IlsWfIFFH5Wb\n1gauGu+v3QH86Si5dIfmOA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-geoinfo@my-project-1474597391583.iam.gserviceaccount.com",
+  "client_id": "101466262563591642673",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-geoinfo%40my-project-1474597391583.iam.gserviceaccount.com"
+}

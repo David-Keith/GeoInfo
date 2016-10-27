@@ -97,7 +97,7 @@ $(document).ready(function () {
                 expect(buttons[0]).not.toBeUndefined();
                 // expect(buttons[1].innerHTML).toBe("Save");
             });
-            it("Has a SavedLocationsList component", function () {
+            it("Has a TodoList component", function () {
                 expect(function () {
                     TestUtils.findRenderedComponentWithType(savedLocationsAppComponent, SavedLocationsList);
                 }).not.toThrow();
@@ -294,6 +294,162 @@ class Fcast extends React.Component {
         return (<div><h1>-Current Forecast-<br/> {this.state.forecast.currently.icon} <br/>Temp: {this.state.forecast.currently.temperature }</h1></div>);
     }
 }
+
+// /************************************************************
+//  *
+//  * Testing
+//  *
+//  *************************************************************/
+// // SEPARATE FILES!!!
+// // simulate google maps click! spy on actual maps object?
+// $(document).ready(function () {
+//     // should probably spy on google maps click event somehow instead of mockMap
+//     describe("Clicking on the map", function () {
+//         var mockClick = "mocked location clicked on google map"; //mocks a click on the Google map
+//         var mockMap = {click: function(){console.log("Map was clicked. This is never actually called.")}}; //mock Google map
+//         var darkSkyAjaxMock = {fetch: function(){}}; //mocks call to darkSky ajax for forecast
+//         var mockLocation; //mocks a location returned by a click on Google map
+//         var mockForecast; //mocks forecast returned by mock darkSky ajax request
+//         var mockSampleForecast = sampleForecast; //mock forecast object provided by sample data in sampleForecastData.js
+//
+//         beforeEach(function(done){
+//             // mock clicking on the map
+//             spyOn(mockMap, "click").and.callFake(function(param)
+//             {
+//                 mockLocation = {longitude: 123, latitude: 123};
+//
+//                 // mock returning the forecast from ajax call
+//                 spyOn(darkSkyAjaxMock, "fetch").and.callFake(function(param)
+//                 {
+//                     mockForecast = mockSampleForecast;
+//                     // done();
+//                 });
+//                 darkSkyAjaxMock.fetch(mockLocation);
+//                 done();
+//             });
+//             mockMap.click(mockClick);
+//             // alternative definition of an AJAX call that looks more realistic. doesn't seem to matter tho
+//             // mockMap.click({
+//             // 	success: function () {
+//             // 		done();
+//             // 	}
+//             // });
+//         });
+//         it("Should retrieve a map location", function () {
+//             expect(mockMap.click).toHaveBeenCalledWith(mockClick);
+//             expect(mockLocation).toEqual({longitude: 123, latitude: 123});
+//         });
+//         it("Should retrieve a forecast", function () {
+//             expect(darkSkyAjaxMock.fetch).toHaveBeenCalledWith(mockLocation);
+//             expect(mockForecast).toEqual(mockSampleForecast);
+//         });
+//
+//         describe('Forecast', function () {
+//             var TestUtils = React.addons.TestUtils;
+//             var forecastComponent, element;
+//             beforeEach(function (done) {
+//                 element = React.createElement(Fcast);
+//                 forecastComponent = TestUtils.renderIntoDocument(element);
+//                 forecastComponent.setState({forecast: mockForecast}, done);
+//                 // ReactDOM.render(<Fcast />, document.getElementById('forecastContainer'));
+//             });
+//             it("Should be rendered with the correct forecast", function() {
+//                 expect(forecastComponent.state.forecast).toEqual(mockForecast); //ensure forecast is correct
+//                 let renderedForecast = TestUtils.findRenderedDOMComponentWithTag(forecastComponent, "div");
+//                 expect(renderedForecast).not.toBeUndefined(); //ensure forecast rendered onto page
+//             });
+//         });
+//     });
+//
+//     describe("A logged in user", function () {
+//         // sessionStorage should probably be mocked...
+//         sessionStorage.setItem("username", "jasmine test");
+//         it("Should be recognized", function () {
+//             expect(sessionStorage.getItem("username")).not.toBeNull();
+//         });
+//
+//         describe("SavedLocationsApp", function () {
+//             var TestUtils = React.addons.TestUtils;
+//             var savedLocationsAppComponent, element;
+//
+//             beforeEach(function (done) {
+//                 element = React.createElement(SavedLocationsApp);
+//                 savedLocationsAppComponent = TestUtils.renderIntoDocument(element);
+//                 savedLocationsAppComponent.setState({}, done);
+//                 // ReactDOM.render( < SavedLocationsApp / >, document.getElementById('SavedLocationsParentDiv'));
+//             });
+//             it("Has a save button", function () {
+//                 let buttons = TestUtils.scryRenderedDOMComponentsWithTag(savedLocationsAppComponent, "button");
+//                 /*
+//                  Warning: Anti-pattern: should *not* have this hard-coded index into the button array
+//                  Better: Add an ID to that button, and then find it
+//                  Same applies everywhere else below that we use the same anti-pattern
+//                  */
+//                 expect(buttons[0]).not.toBeUndefined();
+//                 // expect(buttons[1].innerHTML).toBe("Save");
+//             });
+//             it("Has a TodoList component", function () {
+//                 expect(function () {
+//                     TestUtils.findRenderedComponentWithType(savedLocationsAppComponent, SavedLocationsList);
+//                 }).not.toThrow();
+//             });
+//             describe("Save button", function () {
+//                 beforeEach(function () {
+//                     spyOn(savedLocationsAppComponent.fireRef, "push");
+//                 });
+//                 it("Causes fireBase push to be called", function () {
+//                     let button = TestUtils.scryRenderedDOMComponentsWithTag(savedLocationsAppComponent, "button")[0];
+//                     TestUtils.Simulate.click(button);
+//                     expect(savedLocationsAppComponent.fireRef.push).toHaveBeenCalledWith(forecast);
+//                 });
+//             });
+//             describe("SavedLocationsList", function () {
+//                 var listElement, appElement;
+//                 var savedLocationsListComponent;
+//                 var mockItems = [{'.key': "sample"}];
+//
+//                 beforeEach(function(){
+//                     // render test React savedLocationsApp component
+//                     appElement = React.createElement(SavedLocationsApp);
+//                     savedLocationsAppComponent = TestUtils.renderIntoDocument(appElement);
+//                     savedLocationsAppComponent.setState({mockItems});
+//
+//                     // set up necessary props for React savedLocationsList component
+//                     var props = {
+//                         items: mockItems,
+//                         removeItem: savedLocationsAppComponent.removeItem.bind(null, mockItems[0]),
+//                         goToLoc: savedLocationsAppComponent.goToLoc.bind(null, mockItems[0])
+//                     };
+//                     // render test React savedLocationsList component
+//                     listElement = React.createElement(SavedLocationsList, props);
+//                     savedLocationsListComponent = TestUtils.renderIntoDocument(listElement);
+//                 });
+//                 it("Updates the map when go is clicked", function () {
+//                     // keep temporary reference to goToLocation function
+//                     var temp = goToLocation;
+//                     // mock goToLocation (assume it appropriately updates the map and forecast when go is clicked)
+//                     goToLocation = jasmine.createSpy();
+//
+//                     // find the go button for the first location, simulate click, and expect function call
+//                     var buttons = TestUtils.scryRenderedDOMComponentsWithTag(savedLocationsListComponent,"button");
+//                     TestUtils.Simulate.click(buttons[0]);
+//                     expect(goToLocation).toHaveBeenCalledWith(mockItems[0]['.key']);
+//
+//                     // restore function
+//                     goToLocation = temp;
+//                 });
+//                 it("Removes items from firebase when delete is clicked", function(){
+//                     var deleteSpy = jasmine.createSpy("remove");
+//                     spyOn(savedLocationsAppComponent.fireRef, "child").and.returnValue({remove : deleteSpy});
+//                     var deleteButtons = TestUtils.scryRenderedDOMComponentsWithTag(savedLocationsListComponent,"button");
+//                     TestUtils.Simulate.click(deleteButtons[1]);
+//                     expect(savedLocationsAppComponent.fireRef.child).toHaveBeenCalledWith(mockItems[0]);
+//                     expect(deleteSpy).toHaveBeenCalled();
+//                 });
+//             });
+//         });
+//     });
+// });
 
 /************************************************************
  *
