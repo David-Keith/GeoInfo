@@ -187,16 +187,17 @@ class Fcast extends React.Component {
  *************************************************************/
 var numLocationsSaved = 0; //keeps track of how many locations the user has saved
 var locationCapacity = 3; //the user can save up to this many locations
-var savedLocationsRef; //reference to the database of saved locations for the current user
-var userRef;
+var userRef; //reference to the database by UID at the top level of the user
+var savedLocationsRef; //reference to the database of saved locations for the user
+var uid; //unique id for a user signed in through authentication service
 
 // Need to wait for the page to be loaded, then run rest of the code
 $(document).ready(function () {
 
-// If not user is logged in, don't continue. Don't need to offer the ability to save/go to saved locations
-    if (sessionStorage.getItem("isLoggedIn") == undefined || sessionStorage.getItem("isLoggedIn") === "false") {
-        return;
-    }
+// // If not user is logged in, don't continue. Don't need to offer the ability to save/go to saved locations
+    // if (sessionStorage.getItem("isLoggedIn") == undefined || sessionStorage.getItem("isLoggedIn") === "false") {
+        // return;
+    // }
 
 // Initialize Firebase
     var config = {
@@ -207,44 +208,74 @@ $(document).ready(function () {
         messagingSenderId: "32110869379"
     };
     firebase.initializeApp(config);
+	
+    firebase.auth().onAuthStateChanged(function (user) {
+    	if (user) {
+    		uid = user.uid;
+    		userRef = firebase.database().ref('users/' + uid);
+    		savedLocationsRef = firebase.database().ref('users/' + uid + '/' + 'savedLocations');
 
-// Reference to currently logged in user's saved locations in firebase
-    savedLocationsRef = firebase.database().ref('users/' + sessionStorage.getItem("username") + '/' + 'savedLocations');
-	userRef = firebase.database().ref('users/' + sessionStorage.getItem("username"));
+			// Render the user's list of saved locations
+    		ReactDOM.render(<SavedLocationsApp/> , document.getElementById('SavedLocationsParentDiv'));
 
-// Firebase event handler for when a new location is added to the database
-    savedLocationsRef.on("child_added", function (data) {		
-        // users can currently save up to 3 locations
-        if ((numLocationsSaved >= locationCapacity)) return;
-        numLocationsSaved++;
+    		// Firebase event handler for when a new location is added to the database
+    		savedLocationsRef.on("child_added", function (data) {
+    			// users can currently save up to 3 locations
+    			if ((numLocationsSaved >= locationCapacity))
+    				return;
+    			numLocationsSaved++;
 
-        // disable the save button when the capacity of saved locations is reached
-        if (numLocationsSaved >= locationCapacity)
-            $('#saveButton').prop('disabled', true);
+    			// disable the save button when the capacity of saved locations is reached
+    			if (numLocationsSaved >= locationCapacity)
+    				$('#saveButton').prop('disabled', true);
+    		});
+
+    		// Firebase event handler for when a saved location is removed
+    		savedLocationsRef.on("child_removed", function (data) {
+    			// update the locations counter and restore the save button
+    			numLocationsSaved--;
+    			if (numLocationsSaved < locationCapacity)
+    				$('#saveButton').prop('disabled', false);
+    		});
+
+    		// Firebase event handler for when any new entry is added to a user's stored data
+    		userRef.on("child_added", function (data) {
+    			// console.log(data);
+    			// Try to render an image if the user has one added/saved
+    			renderProfilePic(data.val());
+    		});
+
+    		// Same as add, but is called when replacing currently stored data
+    		userRef.on("child_changed", function (data) {
+    			renderProfilePic(data.val());
+    		});
+			
+			// Display the profile pic file upload form for a user that is logged in
+			firebase.auth().currentUser.getToken().then(function (idToken) {
+				$('#profilePicForm').html('<u>Profile Pic</u><br/><form id="picForm" action="/pic" method="post" enctype="multipart/form-data"><input type="file" id="newFile" name="img" />'
+					+ '<input type="submit" value="Upload" /><input type="hidden" name="token" value="' + idToken + '" /></form><br/>');
+			});
+    	}
     });
+	
+	// When a user submits a profile pic file to upload, send the ajax REST request to the server
+	// $('#picForm').submit(function (e) { //doing it this way would cause page to redirect to /pic
+	$(document).on('submit', '#picForm', function(e) {
+		e.preventDefault();
 
-// Firebase event handler for when a saved location is removed
-    savedLocationsRef.on("child_removed", function (data) {
-        // update the locations counter and restore the save button
-        numLocationsSaved--;
-        if (numLocationsSaved < locationCapacity)
-            $('#saveButton').prop('disabled', false);
-    });
-	
-	
-// Firebase event handler for when any new entry is added to a user's stored data
-	userRef.on("child_added", function (data) {
-		// console.log(data);
-		// Try to render an image if the user has one added/saved
-		renderProfilePic(data.val());
-	});
-	
-	// Same as add, but is called when replacing currently stored data
-	userRef.on("child_changed", function (data) {
-		renderProfilePic(data.val());
-	});
+		var formData = new FormData($("#picForm")[0]);
+		// console.log($("#picForm")[0]);
 
-// })
+		firebase.auth().currentUser.getToken().then(function (idToken) {
+			$.ajax({
+				url : "/pic",
+				type : "POST",
+				data : formData,
+				processData : false,
+				contentType : false
+			});
+		});
+	});
 
 // Render a user's profile pic if it exists and matches the given link
 function renderProfilePic(img) {
@@ -256,26 +287,6 @@ function renderProfilePic(img) {
 		}
     });
 }
-
-// Display the profile pic file upload form for a user that is logged in
-$('#profilePicForm').html('<u>Profile Pic</u><br/><form id="picForm" action="/pic" method="post" enctype="multipart/form-data"><input type="file" id="newFile" name="img" />'
- + '<input type="submit" value="Upload" /><input type="hidden" name="user" value="' + sessionStorage.getItem("username") + '" /></form><br/>');
-
- // When a user submits a profile pic file to upload, send the ajax REST request to the server
-$('#picForm').submit(function(e) {
-	e.preventDefault();
-
-	var formData = new FormData($("#picForm")[0]);
-	// console.log($("#picForm")[0]);
-	$.ajax({
-		url: "/pic",
-		type: "POST",
-		data: formData,
-		processData: false,
-		contentType: false
-
-	});
-});
 
 // React component to represent a user's list of saved locations
     var SavedLocationsList = React.createClass({
@@ -303,7 +314,7 @@ $('#picForm').submit(function(e) {
 
         // Binds React to the specified firebase database which loads the database and tracks changes
         componentWillMount: function () {
-            this.fireRef = firebase.database().ref('users/' + sessionStorage.getItem("username") + '/' + 'savedLocations');
+			this.fireRef = savedLocationsRef;
 
             this.bindAsArray(this.fireRef, "items");
         },
@@ -316,11 +327,13 @@ $('#picForm').submit(function(e) {
             // this.fireRef.child(key).remove();
 			
 			// HTTP Delete request since there is no $.delete function in jquery
-			$.ajax({
+			firebase.auth().currentUser.getToken().then(function(idToken) {
+				$.ajax({
 				url: '/savedLocation',
 				type: 'DELETE',
-				data: {user: sessionStorage.getItem("username"), key: key}
-			});
+				data: {token: idToken, key: key}
+				});
+            });
         },
 
         // forwards adding to the firebase event listener above
@@ -328,7 +341,10 @@ $('#picForm').submit(function(e) {
 			console.log(forecast.savedAddress);
             // this.fireRef.push(forecast);
 			forecast.savedAddress = savedResults[1].formatted_address; //non-permanent ugly fix for race BUG in goToLocation()
-			$.post("/savedLocation", {user: sessionStorage.getItem("username"), savedLocation: forecast});
+			
+			firebase.auth().currentUser.getToken().then(function(idToken) {
+				$.post("/savedLocation", {token: idToken, savedLocation: forecast});
+            });
         },
         // when a user clicks to go to a location, forward that call to goToLocation
         goToLoc: function (item) {
@@ -344,9 +360,6 @@ $('#picForm').submit(function(e) {
             );
         }
     });
-
-    ReactDOM.render(<SavedLocationsApp />, document.getElementById('SavedLocationsParentDiv'));
-
 })
 
 /*--------
@@ -381,7 +394,8 @@ function goToLocation(key) {
 	// Doing it through a REST ajax call:
 	// BUG: race condition between geocodeLatLng and requestForecast on updating forecast.savedAddress!
 	// savedAddress may still be refering to the previous saved address, but forecast object still correct
-	$.post("/goto", {user: sessionStorage.getItem("username"), key: key}, function(res) {
+	firebase.auth().currentUser.getToken().then(function(idToken) {
+		$.post("/goto", {token: idToken, key: key}, function(res) {
 		// if a saved location wasn't found, fail
 		if (res == null || res == undefined) {
 			console.log("failed!");
@@ -413,6 +427,7 @@ function goToLocation(key) {
             transform: "translate(-4%, -4%)",
             transition: "0s"
         });
+	});
 }
 
 // UNUSED: for know-how purposes only

@@ -100,21 +100,25 @@ app.post('/test', function(req, res) {
 * Handles uploading a profile pic file to Google cloud storage
 */
 app.post('/pic', uploader.single("img"), sendUploadToGCS, function (req, res, next) {
-	var user = req.body.user; //the user whose profile pic will be updated
-	var img; //will point to the link for the profile pic
+	var idToken = req.body.token; //the authentication token for user whose profile pic will be updated
+	var img; //will point to the link for the profile pic (which is stored in google storage)
+	
+    firebase.auth().verifyIdToken(idToken).then(function (decodedToken) {
+        var uid = decodedToken.uid;
+	
 	// If the request contained a file to upload, get a link to it
 	if (req.file) {
 		console.log("file upload requested");
 		img = getPublicUrl(req.file.cloudStorageObject);
-		// data.img = getPublicUrl(req.file.cloudStorageObject);
 	}
 	// Store the link to the pic in the database for the user
-	fireRef.child(req.body.user).update({"img" : img}, function() {
+		fireRef.child(uid).update({"img" : img}, function() {
 			res.send("OK!");
 		}).catch(function(){
 			res.status(403);
 			res.send();
-    });
+		});
+	});
 });
 
 /****************************************************************
@@ -192,33 +196,44 @@ app.post('/register', function(req, res) {
 * When a user requests to go to a saved location
 */
 app.post('/goto', function(req, res) {
-	var user = req.body.user;
-	var key = req.body.key;
+	var key = req.body.key; //key for the location stored in the user's database
 	var resp;
-	console.log("goto request received user:", user, " key:", key);
+	console.log("goto request received key:", key);
 	
-	fireRef.child(user).child('savedLocations').child(key)
-   .once("value")
-	.then(function (snapshot) {
-		// get the data for corresponding location
-		resp = {lat: snapshot.val().latitude, lng: snapshot.val().longitude};
-		console.log(resp);
-		res.send(resp);
+	firebase.auth().verifyIdToken(req.body.token).then(function (decodedToken) {
+        var uid = decodedToken.uid;
+		
+		fireRef.child(uid).child('savedLocations').child(key)
+		.once("value")
+		.then(function (snapshot) {
+			// get the data for corresponding location
+			resp = {lat: snapshot.val().latitude, lng: snapshot.val().longitude};
+			console.log(resp);
+			res.send(resp);
+		});
 	});
 });
 
 // When a user requests to add a saved location
 app.post('/savedLocation', function(req, res) {
-	console.log("save location request received for", req.body.user);
-	fireRef.child(req.body.user).child('savedLocations').push(req.body.savedLocation);
-	res.send("OK!");
+	console.log("save location request received");
+	
+	firebase.auth().verifyIdToken(req.body.token).then(function (decodedToken) {
+        var uid = decodedToken.uid;
+		fireRef.child(uid).child('savedLocations').push(req.body.savedLocation);
+		res.send("OK!");
+	});
 });
 
 // When a user requests to delete a saved location
 app.delete('/savedLocation', function(req, res) {
-	console.log("remove location request received for", req.body.user);
-	fireRef.child(req.body.user).child('savedLocations').child(req.body.key).remove();
-	res.send("OK!");
+	console.log("remove location request received for", req.body.key);
+	
+	firebase.auth().verifyIdToken(req.body.token).then(function (decodedToken) {
+        var uid = decodedToken.uid;
+		fireRef.child(uid).child('savedLocations').child(req.body.key).remove();
+		res.send("OK!");
+	});
 });
 
 /****************************************************************/
@@ -228,4 +243,5 @@ app.listen(app.get('port'), function () {
     console.log('Example app listening on port ', app.get('port'));
 });
 
+// Serves all front end files stored in 'public' folder
 app.use(express.static('public'));

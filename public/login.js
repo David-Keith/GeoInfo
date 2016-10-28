@@ -24,6 +24,71 @@
 "use strict";
 
 $(document).ready(function () {
+	// Initialize Firebase
+	var config = {
+    apiKey: "AIzaSyD2UUPgwcNq70p5B7GfpaQqiIZOmJNPFjs",
+    authDomain: "my-project-1474597391583.firebaseapp.com",
+    databaseURL: "https://my-project-1474597391583.firebaseio.com",
+    storageBucket: "my-project-1474597391583.appspot.com",
+    messagingSenderId: "32110869379"
+  };
+  firebase.initializeApp(config);
+  
+  // Code to handle a change in sign in
+  var userName;
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            $("#firebaseui-auth-container").hide();
+            // User is signed in.
+            var displayName = user.displayName;
+            var email = user.email;
+            var emailVerified = user.emailVerified;
+            var photoURL = user.photoURL;
+            var uid = user.uid;
+            userName = user.uid;
+
+            var providerData = user.providerData;
+            user.getToken().then(function(accessToken) {
+                document.getElementById('sign-in-status').textContent = "Welcome, " + displayName;
+                document.getElementById('account-details').textContent = JSON.stringify({
+                    displayName: displayName,
+                    email: email,
+                    emailVerified: emailVerified,
+                    photoURL: photoURL,
+                    uid: uid,
+                    accessToken: accessToken,
+                    providerData: providerData
+                }, null, '  ');
+            });
+        } else {
+            console.log("Signed out");
+            // User is signed out.
+            $("#header").hide();
+            // FirebaseUI config.
+            var uiConfig = {
+                'signInSuccessUrl': '/app.html', //URL that we get sent BACK to after logging in
+                'signInOptions': [
+                    // Leave the lines as is for the providers you want to offer your users.
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+//            firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+//            firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+//            firebase.auth.GithubAuthProvider.PROVIDER_ID,
+//                    firebase.auth.EmailAuthProvider.PROVIDER_ID
+                ],
+                // Terms of service url.
+                'tosUrl': '<your-tos-url>',
+            };
+
+            // Initialize the FirebaseUI Widget using Firebase.
+            var ui = new firebaseui.auth.AuthUI(firebase.auth());
+            // The start method will wait until the DOM is loaded.
+            ui.start('#firebaseui-auth-container', uiConfig);
+            $("#container").hide();
+        }
+    }, function(error) {
+        console.log(error);
+    });
+	
     if (sessionStorage.getItem("isLoggedIn") == undefined) {
         sessionStorage.setItem("isLoggedIn", "false");
     }
