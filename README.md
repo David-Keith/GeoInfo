@@ -8,3 +8,5 @@ Scenarios
 4. Saving and viewing up to 3 locations/forecasts for a logged-in user (implemented in HW4)
 
 Heroku link: https://warm-dawn-58582.herokuapp.com/
+
+Working scenarios: 1, 2, 4

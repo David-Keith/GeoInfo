@@ -11,6 +11,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+	
+	<!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/live/0.5/firebase-ui-auth.css" />
+	
     <script type="text/babel" src="login.js"></script>
 </head>
 
@@ -20,6 +25,18 @@
     <a href="/login.html">Login</a>
     <a href="/app.html">App</a>
 </nav>
+
+<div id="header" style="padding: 32px 0px 0px 32px;">
+    <span id="sign-in-status"></span> | <a href="javascript:firebase.auth().signOut()">Sign Out</a>
+</div>
+<div id="firebaseui-auth-container" style="padding: 32px 0px 0px 0px; width: 20%;"></div>
+
+<div id="container">
+    <!-- This element's contents will be replaced with your component. -->
+</div>
+<div id="footer">
+    Debug: <span id="account-details"></span>
+</div>
 
 <div id="LoginForm">
     <h2 id="SecuirtyWarning">Don't use any actual passwords here. There is no security implemented.</h2>
