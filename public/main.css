@@ -138,11 +138,20 @@ td, th {
     display: none;
 }
 
-#mapContainer {
+#app {
 	border: 2px solid blue;
 	margin: auto;
-	height: 40%;
-	width: 30%;
+	height: 50%;
+	width: 100%;
+}
+
+#mapContainer {
+	border: 2px solid blue;
+	/* margin: auto; */
+	position: absolute;
+	height: 50%;
+	width: 40%;
+	left: 5%;
 }
 
 #map {
@@ -153,9 +162,9 @@ td, th {
 #forecastContainer {
 	position: absolute;
 	border: 2px solid red;
-	height: 40%;
-	width: 30%;
-	left: 25%;
+	height: 50%;
+	width: 40%;
+	left: 55%;
 }
 
 #weather {

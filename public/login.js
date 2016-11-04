@@ -50,15 +50,15 @@ $(document).ready(function () {
             var providerData = user.providerData;
             user.getToken().then(function(accessToken) {
                 document.getElementById('sign-in-status').textContent = "Welcome, " + displayName;
-                document.getElementById('account-details').textContent = JSON.stringify({
-                    displayName: displayName,
-                    email: email,
-                    emailVerified: emailVerified,
-                    photoURL: photoURL,
-                    uid: uid,
-                    accessToken: accessToken,
-                    providerData: providerData
-                }, null, '  ');
+                // document.getElementById('account-details').textContent = JSON.stringify({
+                    // displayName: displayName,
+                    // email: email,
+                    // emailVerified: emailVerified,
+                    // photoURL: photoURL,
+                    // uid: uid,
+                    // accessToken: accessToken,
+                    // providerData: providerData
+                // }, null, '  ');
             });
         } else {
             console.log("Signed out");
