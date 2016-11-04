@@ -107,12 +107,23 @@ function geocodeLatLng(loc, geocoder, map, infowindow) {
             if (results[1]) {
                 infowindow.setContent(results[1].formatted_address); //results is an array of location strings for current location
                 infowindow.open(map, marker); //popup window on the map at the marker position
-                savedResults = results;
+                savedResults = results[1].formatted_address;
             } else {
+				for (var r of results) {
+					if (r) {
+						infowindow.setContent(r.formatted_address); //results is an array of location strings for current location
+						infowindow.open(map, marker); //popup window on the map at the marker position
+						savedResults = r.formatted_address;
+						return;
+					}
+				}
                 window.alert('No results found');
             }
         } else {
-            window.alert('Geocoder failed due to: ' + status);
+			infowindow.setContent("Unrecognized"); //results is an array of location strings for current location
+			infowindow.open(map, marker); //popup window on the map at the marker position
+			savedResults = "Unrecognized";
+            // window.alert('Geocoder failed due to: ' + status);
         }
     });
 }
@@ -133,7 +144,7 @@ function requestForecast(url) {
 // When requestForecast() returns the dark sky forecast data, display it on the page
 function displayForecast(data) {
     forecast = data;
-    forecast.savedAddress = savedResults[1].formatted_address; //keep track of human readable address for this forecast
+    forecast.savedAddress = savedResults; //keep track of human readable address for this forecast
     var curr = forecast.currently.icon; //a simple string representation of all weather descriptions
 
     for(let i = 0; i < forecast.daily.data.length; i++) {
@@ -340,7 +351,8 @@ function renderProfilePic(img) {
         handleAdd: function (e) {
 			console.log(forecast.savedAddress);
             // this.fireRef.push(forecast);
-			forecast.savedAddress = savedResults[1].formatted_address; //non-permanent ugly fix for race BUG in goToLocation()
+			
+			forecast.savedAddress = savedResults; //non-permanent ugly fix for race BUG in goToLocation()
 			
 			firebase.auth().currentUser.getToken().then(function(idToken) {
 				$.post("/savedLocation", {token: idToken, savedLocation: forecast});
@@ -417,16 +429,16 @@ function goToLocation(key) {
     $('#current').html("Saved location: " + key);
 
     //make a simple little animation to mock the actual update of the map and forecast
-    $(".interactive").animate({
-        opacity: 0.25,
-        transform: "translate(4%, 4%)",
-        transition: "0s"
-    })
-        .animate({
-            opacity: 1,
-            transform: "translate(-4%, -4%)",
-            transition: "0s"
-        });
+    // $(".interactive").animate({
+        // opacity: 0.25,
+        // transform: "translate(4%, 4%)",
+        // transition: "0s"
+    // })
+        // .animate({
+            // opacity: 1,
+            // transform: "translate(-4%, -4%)",
+            // transition: "0s"
+        // });
 	});
 }
 
