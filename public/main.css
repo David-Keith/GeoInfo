@@ -31,7 +31,7 @@ h1 {
     font-size: 64px;
 }
 
-h3 {
+h3, #currentWeather {
     margin: auto;
     position: relative;
     top: 0;

@@ -28,17 +28,6 @@
 // }
 // });
 
-var d3Data = []; // Holds data for d3 js visualization
-var d3Vis = d3.select(".chart")
-        .selectAll("div")
-        .data(d3Data)
-        .style("width", function (d) {
-            return d * 10 + "px";
-        })
-        .text(function (d) {
-            console.log("d3 " + d3Data);
-            return d;
-        });
 /************************************************************
  *
  * Map and Forecast
@@ -51,6 +40,9 @@ var darkSkyApiKey = '03d14d1e2d3de53ec23dd243075b9f42'; //the key needed to use 
 var darkURL = "https://api.darksky.net/forecast/" + darkSkyApiKey + "/"; //forms the beginning of the ajax http get request url
 var forecast; //object that will hold weather data for a specific location
 var savedResults; //save the results that are generated for a reverse geocoded address when the map is marked
+var wicon; // the filename for the weather icon that will be displayed
+var firstD3 = true; // flag to track if this is the first time the D3 visualization is being generated
+var d3Data = []; // Holds data for d3 js visualization
 
 // Initialize the google map centered on GMU
 function initMap() {
@@ -76,13 +68,13 @@ google.maps.event.addListener(map, 'click', function (event) {
         return;
     }
     //otherwise add a marker and info window of the current location and request the forecast there
-    addMarker(event.latLng, map);
+    // addMarker(event.latLng, map);
     var geocoder = new google.maps.Geocoder;
     var infowindow = new google.maps.InfoWindow;
 
-
-    geocodeLatLng(event.latLng, geocoder, map, infowindow); //show info window of location
-    requestForecast(darkURL + event.latLng.toUrlValue()) //request and update current forecast
+	// Update map and forecast
+    getLocAndForecast(event.latLng, geocoder, map, infowindow);
+    // requestForecast(darkURL + event.latLng.toUrlValue()); //request and update current forecast
 })
 // });
 
@@ -97,32 +89,50 @@ function addMarker(location, map) {
     });
 }
 
-// Translate a lat/lng location object into a human-readable address and display it on the map
-function geocodeLatLng(loc, geocoder, map, infowindow) {
+// Translate a lat/lng location object into a human-readable address and display it on the map.
+// Then begin API call to get forecast. These 2 async calls are forced synchronously so that
+// the location in human readable form can be retrieved first, then correctly linked to forecast
+function getLocAndForecast(loc, geocoder, map, infowindow) {
+	// If this function was called from Google map listener, the location object is different
+	// and must call toUrlValue() to get the string value. Otherwise it was called from goToLoc()
+	// and the loc argument simply contains plain string format already
+	var locString = loc.toUrlValue ? loc.toUrlValue() : (loc.lat + "," + loc.lng);
+	
+	// Google API call to retrieve map encoding info
     geocoder.geocode({
         'location': loc
     }, function (results, status) {
         if (status === 'OK') {
-            //display an infowindow on the map for the current location
+            // If first (preferred) address format is found
             if (results[1]) {
+				addMarker(loc, map);
                 infowindow.setContent(results[1].formatted_address); //results is an array of location strings for current location
                 infowindow.open(map, marker); //popup window on the map at the marker position
                 savedResults = results[1].formatted_address;
-            } else {
+				requestForecast(darkURL + locString);
+            } 
+			// Else try to find any address format to use
+			else {
 				for (var r of results) {
 					if (r) {
+						addMarker(loc, map);
 						infowindow.setContent(r.formatted_address); //results is an array of location strings for current location
 						infowindow.open(map, marker); //popup window on the map at the marker position
 						savedResults = r.formatted_address;
+						requestForecast(darkURL + locString);
 						return;
 					}
 				}
                 window.alert('No results found');
             }
-        } else {
+        } 
+		// Else no result was found on the map, can still try to get the forecast tho
+		else {
+			addMarker(loc, map);
 			infowindow.setContent("Unrecognized"); //results is an array of location strings for current location
 			infowindow.open(map, marker); //popup window on the map at the marker position
 			savedResults = "Unrecognized";
+			requestForecast(darkURL + locString);
             // window.alert('Geocoder failed due to: ' + status);
         }
     });
@@ -145,30 +155,35 @@ function requestForecast(url) {
 function displayForecast(data) {
     forecast = data;
     forecast.savedAddress = savedResults; //keep track of human readable address for this forecast
-    var curr = forecast.currently.icon; //a simple string representation of all weather descriptions
+    var curr = forecast.currently.icon; //a simple string representation of any weather description
 
+	// Update the D3 data to contain the temperature highs for today and the next 7 days
     for(let i = 0; i < forecast.daily.data.length; i++) {
         d3Data[i] = (forecast.daily.data[i].temperatureMax);
     }
 
-    console.log(d3Data);
+	// Update D3 forecast
     updateVis();
-    // Update the DOM forecast display using React class Fcast, defined below
-    ReactDOM.render(<Fcast />, document.getElementById('forecastContainer'));
-
+	
+	wicon = "unknown";
     // these are all the possible weather descriptions dark sky returns
-    // want to display an icon for these conditions eventually
-    if (curr === "clear-day") console.log("clear day!");
-    else if (curr === "clear-night") console.log("clear night!");
-    else if (curr === "rain") console.log("rain! :(");
-    else if (curr === "snow") console.log("snow!brr");
-    else if (curr === "sleet") console.log("sleet!");
-    else if (curr === "wind") console.log("windy!!");
-    else if (curr === "fog") console.log("fog!!");
-    else if (curr === "cloudy") console.log("clouds");
-    else if (curr === "partly-cloudy-day") console.log("cloudy day");
-    else if (curr === "partly-cloudy-night") console.log("cloudy night");
+    // update the icon displayed based on this
+    if (curr === "clear-day") wicon = "sun";
+    else if (curr === "clear-night") wicon = "clearnight";
+    else if (curr === "rain") wicon = "rain";
+    else if (curr === "snow") wicon = "snow";
+    else if (curr === "sleet") wicon = "sleet";
+    else if (curr === "wind") wicon = "windy";
+    else if (curr === "fog") wicon = "fog";
+    else if (curr === "cloudy") wicon = "cloudy";
+    else if (curr === "partly-cloudy-day") wicon = "partlycloudy";
+    else if (curr === "partly-cloudy-night") wicon = "night";
     else console.log("unknown weather: " + curr);
+	
+	wicon = ("wicons/" + wicon + ".png");
+	
+	// Update the DOM forecast display using React class Fcast, defined below
+    ReactDOM.render(<Fcast />, document.getElementById('forecastContainer'));
 
 // 	// for now, can just show a simple forecast on the screen. later should do something more interesting with this data
 // 	$('#forecastContainer').html("<h1>-Current Forecast-<br/>" + curr + "<br/>Temp: " + forecast.currently.temperature + "</h1>");
@@ -185,8 +200,18 @@ class Fcast extends React.Component {
     render() {
         this.state.forecast = forecast;
         if (this.state.forecast === undefined) return null;
-        return (<div><h1>-Current Forecast-<br/> {this.state.forecast.currently.icon}
-            <br/>Temp: {this.state.forecast.currently.temperature }</h1></div>);
+		
+		// Set up time string that will be displayed
+		var date = new Date(this.state.forecast.currently.time*1000);
+		var time = date.getHours() + ":" + (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
+		
+		// Dynamically render the weather report onto the page
+        return (<div><h1>Current Weather</h1> <h2 id="currentWeather"> {savedResults}<br/> 
+		<img src={wicon} alt="weather" style={{width:64 + 'px', height:64 + 'px'}} />
+		<br/>{time}
+		<br/>{this.state.forecast.currently.summary}
+		<br/>Precipitation: {this.state.forecast.currently.precipProbability * 100}%
+	<br/>{this.state.forecast.currently.temperature}&deg; F</h2></div>);
     }
 }
 
@@ -352,7 +377,7 @@ function renderProfilePic(img) {
 			console.log(forecast.savedAddress);
             // this.fireRef.push(forecast);
 			
-			forecast.savedAddress = savedResults; //non-permanent ugly fix for race BUG in goToLocation()
+			// forecast.savedAddress = savedResults; //non-permanent ugly fix for race BUG in goToLocation()
 			
 			firebase.auth().currentUser.getToken().then(function(idToken) {
 				$.post("/savedLocation", {token: idToken, savedLocation: forecast});
@@ -365,7 +390,7 @@ function renderProfilePic(img) {
         render: function () {
             return (
                 <div>
-                    <u>Saved Locations</u>
+                    <u>Saved Locations</u> (up to 3)
                     <SavedLocationsList items={this.state.items} removeItem={this.removeItem} goToLoc={this.goToLoc}/>
                     <button id={'saveButton'} onClick={this.handleAdd}>Save</button>
                 </div>
@@ -400,12 +425,10 @@ function goToLocation(key) {
             // var geocoder = new google.maps.Geocoder;
             // var infowindow = new google.maps.InfoWindow;
             // addMarker(currentLatLng, map); //add map marker
-            // geocodeLatLng(currentLatLng, geocoder, map, infowindow); //show info window of location
+            // getLocAndForecast(currentLatLng, geocoder, map, infowindow); //show info window of location
         // });
 		
 	// Doing it through a REST ajax call:
-	// BUG: race condition between geocodeLatLng and requestForecast on updating forecast.savedAddress!
-	// savedAddress may still be refering to the previous saved address, but forecast object still correct
 	firebase.auth().currentUser.getToken().then(function(idToken) {
 		$.post("/goto", {token: idToken, key: key}, function(res) {
 		// if a saved location wasn't found, fail
@@ -419,14 +442,16 @@ function goToLocation(key) {
 		// update the map by going to the location being requested
 		var geocoder = new google.maps.Geocoder;
 		var infowindow = new google.maps.InfoWindow;
-		geocodeLatLng(currentLatLng, geocoder, map, infowindow); //show info window of location
-		addMarker(currentLatLng, map); //add map marker
+		
+		// update map and forecast
+		getLocAndForecast(currentLatLng, geocoder, map, infowindow);
+		// addMarker(currentLatLng, map); //add map marker
 		
 		// update the current forecast shown
-		requestForecast(darkURL + res.lat + "," + res.lng);
+		// requestForecast(darkURL + res.lat + "," + res.lng);
 	});
 
-    $('#current').html("Saved location: " + key);
+    // $('#current').html("Saved location: " + key);
 
     //make a simple little animation to mock the actual update of the map and forecast
     // $(".interactive").animate({
@@ -463,120 +488,36 @@ function numLocationsInDatabase() {
     return num;
 }
 
+// Updates the D3 visualization. This will show the temperature highs for the next several days
 function updateVis() {
-    console.log(d3Data);
-    d3Vis = d3.select(".chart")
-        .selectAll("div")
-        .data(d3Data)
-        .enter().append("div")
-        .style("width", function(d)
-        { return d * 10 + "px"; })
-        .text(function(d) {console.log("d3 " + d3Data); return d; });
-    d3Vis.exit().remove();
+	// Use the enter() selector and make divs the first time data is generated
+	if (firstD3) {
+		d3.select(".chart")
+		.selectAll("div")
+		.data(d3Data)
+		.enter().append("div") //this is the difference beween initial generation and updates
+		.style("width", function (d) {
+			return d * 10 + "px";
+		})
+		.text(function (d) {
+			return d;
+		});
+		// d3Vis.exit().remove();
+		firstD3 = false;
+	}
+	else {
+		d3.select(".chart")
+		.selectAll("div")
+		.data(d3Data)
+		.style("width", function (d) {
+			return d * 10 + "px";
+		})
+		.text(function (d) {
+			return d;
+		});
+	}
 
 }
 
-// // d3 js data visualization
-// // Based on stacked bar chart example
-// // https://bl.ocks.org/mbostock/3886208
-// var svg = d3.select("svg"),
-//     margin = {top: 20, right: 20, bottom: 30, left: 40},
-//     width = +svg.attr("width") - margin.left - margin.right,
-//     height = +svg.attr("height") - margin.top - margin.bottom,
-//     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-//
-// var x = d3.scaleBand()
-//     .rangeRound([0, width])
-//     .padding(0.1)
-//     .align(0.1);
-//
-// var y = d3.scaleLinear()
-//     .rangeRound([height, 0]);
-//
-// var z = d3.scaleOrdinal()
-//     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-//
-// var stack = d3.stack();
-//
-//
-// data.sort(function (a, b) {
-//     return b.total - a.total;
-// });
-//
-// x.domain(data.map(function (d) {
-//     return d.State;
-// }));
-// y.domain([0, d3.max(data, function (d) {
-//     return d.total;
-// })]).nice();
-// z.domain(data.columns.slice(1));
-//
-// g.selectAll(".serie")
-//     .data(stack.keys(data.columns.slice(1))(data))
-//     .enter().append("g")
-//     .attr("class", "serie")
-//     .attr("fill", function (d) {
-//         return z(d.key);
-//     })
-//     .selectAll("rect")
-//     .data(function (d) {
-//         return d;
-//     })
-//     .enter().append("rect")
-//     .attr("x", function (d) {
-//         return x(d.data.State);
-//     })
-//     .attr("y", function (d) {
-//         return y(d[1]);
-//     })
-//     .attr("height", function (d) {
-//         return y(d[0]) - y(d[1]);
-//     })
-//     .attr("width", x.bandwidth());
-//
-// g.append("g")
-//     .attr("class", "axis axis--x")
-//     .attr("transform", "translate(0," + height + ")")
-//     .call(d3.axisBottom(x));
-//
-// g.append("g")
-//     .attr("class", "axis axis--y")
-//     .call(d3.axisLeft(y).ticks(10, "s"))
-//     .append("text")
-//     .attr("x", 2)
-//     .attr("y", y(y.ticks(10).pop()))
-//     .attr("dy", "0.35em")
-//     .attr("text-anchor", "start")
-//     .attr("fill", "#000")
-//     .text("Population");
-//
-// var legend = g.selectAll(".legend")
-//     .data(data.columns.slice(1).reverse())
-//     .enter().append("g")
-//     .attr("class", "legend")
-//     .attr("transform", function (d, i) {
-//         return "translate(0," + i * 20 + ")";
-//     })
-//     .style("font", "10px sans-serif");
-//
-// legend.append("rect")
-//     .attr("x", width - 18)
-//     .attr("width", 18)
-//     .attr("height", 18)
-//     .attr("fill", z);
-//
-// legend.append("text")
-//     .attr("x", width - 24)
-//     .attr("y", 9)
-//     .attr("dy", ".35em")
-//     .attr("text-anchor", "end")
-//     .text(function (d) {
-//         return d;
-//     });
-//
-//
-// function type(d, i, columns) {
-//     for (i = 1, t = 0; i < columns.length; ++i) t += d[columns[i]] = +d[columns[i]];
-//     d.total = t;
-//     return d;
-// }
+// Consider using a stacked bar graph to show temperature highs/lows
+// https://bl.ocks.org/mbostock/3886208
